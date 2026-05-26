@@ -188,8 +188,18 @@
       quat.premultiply(parentQ.invert());
     }
 
-    obj.position.copy(hatPos);
-    obj.quaternion.copy(quat);
+    // obj.position.copy(hatPos);
+    // obj.quaternion.copy(quat);
+    // Koreksi offset Chrome Android (address bar menggeser koordinat)
+const isChrome = !navigator.userAgent.includes('Brave') && 
+                 /Chrome/.test(navigator.userAgent) && 
+                 /Android/.test(navigator.userAgent);
+if (isChrome) {
+  hatPos.y -= 0.5;
+}
+
+obj.position.copy(hatPos);
+obj.quaternion.copy(quat);
   }
 });
 
