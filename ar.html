@@ -6,7 +6,6 @@
   <title>AR Try-On — Topi Adat Dayak Kenyah</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <!-- A-Frame HARUS dimuat SEBELUM MindAR -->
-  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <!-- MindAR Face -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-face-aframe.prod.js"></script>
 
@@ -24,6 +23,22 @@
     return origGetContext.call(this, type, attrs);
   };
 </script>
+<script>
+  const origGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+  navigator.mediaDevices.getUserMedia = function(constraints) {
+    if (constraints && constraints.video) {
+      constraints.video = {
+        ...( typeof constraints.video === 'object' ? constraints.video : {} ),
+        width:  { ideal: 640 },
+        height: { ideal: 480 },
+        facingMode: 'user'
+      };
+    }
+    return origGetUserMedia(constraints);
+  };
+</script>
+<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
   <script>
     /* ── Komponen head-center (dari logika AR yang berhasil) ── */
     // AFRAME.registerComponent('head-center', {
@@ -91,8 +106,6 @@
   },
   remove() {},
   tick() {
-    this.el.sceneEl.object3D.updateMatrixWorld(true);
-
     const lm10  = document.getElementById('lm-10');
     const lm152 = document.getElementById('lm-152');
     const lm234 = document.getElementById('lm-234');
@@ -620,7 +633,7 @@
   <a-scene id="ar-scene"
     mindar-face="autoStart: true; uiLoading: false; uiError: false;"
     embedded color-space="sRGB"
-    renderer="colorManagement: true; physicallyCorrectLights: true; preserveDrawingBuffer: true; antialias: false"
+    renderer="colorManagement: true, physicallyCorrectLights, preserveDrawingBuffer: true"
     vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false">
 
