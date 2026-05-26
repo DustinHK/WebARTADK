@@ -5,13 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AR Try-On — Topi Adat Dayak Kenyah</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <!-- A-Frame HARUS dimuat SEBELUM MindAR -->
-  <!-- MindAR Face -->
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-face-aframe.prod.js"></script>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@600;700&display=swap" />
-<!-- Taruh SEBELUM script aframe -->
 <script>
   // Patch WebGL agar preserveDrawingBuffer selalu true
   const origGetContext = HTMLCanvasElement.prototype.getContext;
@@ -38,6 +31,15 @@
   };
 </script>
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-face-aframe.prod.js"></script>
+
+  <!-- A-Frame HARUS dimuat SEBELUM MindAR -->
+  <!-- MindAR Face -->
+
+  
+<!-- Taruh SEBELUM script aframe -->
+
+
 
   <script>
     /* ── Komponen head-center (dari logika AR yang berhasil) ── */
@@ -192,7 +194,8 @@
 });
 
   </script>
-
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@600;700&display=swap" />
   <style>
     :root {
       --gold:       #C9A84C;
