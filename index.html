@@ -1176,14 +1176,12 @@
   })));
 
   // Load GLB via A-Frame assets
-  const assetsEl = document.getElementById('preload-assets');
   await Promise.all(modelFiles.map(file => new Promise(res => {
-    const item = document.createElement('a-asset-item');
-    item.setAttribute('src', `./assets/models/${file}`);
-    item.addEventListener('loaded', () => { update(file); res(); });
-    item.addEventListener('error', () => { update(file); res(); });
-    assetsEl.appendChild(item);
-  })));
+  fetch(`./assets/models/${file}`)
+    .then(r => r.arrayBuffer())
+    .then(() => { update(file); res(); })
+    .catch(() => { update(file); res(); });
+})));
 
   splashText.textContent = 'Siap! ✓';
   setTimeout(finishSplash, 400);
