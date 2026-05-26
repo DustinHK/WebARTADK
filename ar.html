@@ -644,7 +644,7 @@ obj.quaternion.copy(quat);
 <!-- ══ AR SCENE ══ -->
 <div id="ar-container">
   <a-scene id="ar-scene"
-    mindar-face="autoStart: true; uiLoading: false; uiError: false;"
+    mindar-face="autoStart: true; uiLoading: false; uiError: false; filterMinCF: 0.001; filterBeta: 0.01"
     embedded color-space="sRGB"
     renderer="colorManagement: true, physicallyCorrectLights, preserveDrawingBuffer: true"
     vr-mode-ui="enabled: false"
