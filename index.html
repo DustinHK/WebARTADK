@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Topi Adat Dayak Kenyah — WebAR</title>
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IM+Fell+English:ital@0;1&family=Josefin+Sans:wght@300;400;600&display=swap" />
   <style>
@@ -198,11 +199,11 @@
     }
 
     .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--gold-dark), var(--gold-light));
-      width: 0%;
-      animation: fillBar 2.5s cubic-bezier(.4,0,.2,1) forwards;
-    }
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold-light));
+  width: 0%;
+  transition: width 0.3s ease;
+}
 
     @keyframes fillBar {
       0%   { width: 0%; }
@@ -1132,7 +1133,10 @@
     </p>
   </footer>
 </div>
-
+<!-- PINDAH ke sebelum <div id="toast"> -->
+<a-scene id="preload-scene" style="display:none" embedded vr-mode-ui="enabled:false">
+  <a-assets timeout="60000" id="preload-assets"></a-assets>
+</a-scene>
 <div id="toast"></div>
 
 <script src="js/data.js"></script>
@@ -1140,122 +1144,92 @@
 <script>
   /* ── REAL ASSET PRELOADER ─────────────────────────── */
   async function preloadAssets() {
-    const splashText = document.getElementById('splash-text');
-    const progressFill = document.querySelector('.progress-fill');
-    
-    if (typeof TOPI_DATA === 'undefined') {
-      console.error('TOPI_DATA not found!');
-      finishSplash();
-      return;
-    }
+  const splashText = document.getElementById('splash-text');
+  const progressFill = document.querySelector('.progress-fill');
 
-    // 1. Kumpulkan daftar aset
-    const images = ['./assets/images/ui/logo.png'];
-    const models = ['./assets/models/headOccluder.glb'];
-    
-    TOPI_DATA.forEach(topi => {
-      if (topi.gambar) images.push(topi.gambar);
-      if (topi.gambarDetail) images.push(topi.gambarDetail);
-      if (topi.hatFile) models.push(`./assets/models/${topi.hatFile}`);
-    });
+  if (typeof TOPI_DATA === 'undefined') { finishSplash(); return; }
 
-    const totalAssets = images.length + models.length;
-    let loadedCount = 0;
+  const images = ['./assets/images/ui/logo.png'];
+  TOPI_DATA.forEach(topi => {
+    if (topi.gambar) images.push(topi.gambar);
+    if (topi.gambarDetail) images.push(topi.gambarDetail);
+  });
 
-    const updateProgress = (name) => {
-      loadedCount++;
-      const percent = (loadedCount / totalAssets) * 100;
-      progressFill.style.width = percent + '%';
-      splashText.textContent = `Memuat: ${name}… (${loadedCount}/${totalAssets})`;
+  const modelFiles = ['headOccluder.glb'];
+  TOPI_DATA.forEach((_, i) => modelFiles.push(`hat${i + 1}.glb`));
+
+  const total = images.length + modelFiles.length;
+  let loaded = 0;
+
+  const update = (name) => {
+    loaded++;
+    const pct = Math.round((loaded / total) * 100);
+    progressFill.style.width = pct + '%';
+    splashText.textContent = `Memuat ${name}… ${pct}%`;
+  };
+
+  // Load gambar
+  await Promise.all(images.map(url => new Promise(res => {
+    const img = new Image();
+    img.onload = img.onerror = () => { update(url.split('/').pop()); res(); };
+    img.src = url;
+  })));
+
+  // Load GLB via A-Frame assets
+  const assetsEl = document.getElementById('preload-assets');
+  await Promise.all(modelFiles.map(file => new Promise(res => {
+    const item = document.createElement('a-asset-item');
+    item.setAttribute('src', `./assets/models/${file}`);
+    item.addEventListener('loaded', () => { update(file); res(); });
+    item.addEventListener('error', () => { update(file); res(); });
+    assetsEl.appendChild(item);
+  })));
+
+  splashText.textContent = 'Siap! ✓';
+  setTimeout(finishSplash, 400);
+}
+
+function finishSplash() {
+  document.getElementById('splash').classList.add('fade-out');
+  setTimeout(() => {
+    document.getElementById('splash').style.display = 'none';
+    document.getElementById('main').classList.add('visible');
+    buildThumbs();
+  }, 800);
+}
+
+document.addEventListener('DOMContentLoaded', preloadAssets);
+
+function buildThumbs() {
+  const wrap = document.getElementById('hero-thumbs');
+  if (typeof TOPI_DATA === 'undefined') return;
+  TOPI_DATA.forEach(topi => {
+    const div = document.createElement('div');
+    div.className = 'thumb-item';
+    div.title = topi.nama;
+    div.onclick = () => window.location.href = `detail-topi.html?id=${topi.id}`;
+    const img = document.createElement('img');
+    img.src = topi.gambar;
+    img.alt = topi.nama;
+    img.onerror = () => {
+      img.remove();
+      const fb = document.createElement('div');
+      fb.className = 'thumb-fallback';
+      fb.textContent = '🎩';
+      div.appendChild(fb);
     };
+    div.appendChild(img);
+    wrap.appendChild(div);
+  });
+}
 
-    // 2. Fungsi Loaders
-    const loadImage = (url) => {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          updateProgress(url.split('/').pop());
-          resolve();
-        };
-        img.onerror = () => {
-          console.warn('Gagal memuat gambar:', url);
-          updateProgress(url.split('/').pop()); // tetap lanjut walau error
-          resolve();
-        };
-        img.src = url;
-      });
-    };
-
-    const loadModel = async (url) => {
-      try {
-        const resp = await fetch(url);
-        if (!resp.ok) throw new Error();
-        updateProgress(url.split('/').pop());
-      } catch (e) {
-        console.warn('Gagal memuat model:', url);
-        updateProgress(url.split('/').pop());
-      }
-    };
-
-    // 3. Eksekusi Preload
-    // Kita jalankan secara paralel (Promise.all) tapi dengan batching jika perlu.
-    // Untuk 20-30 aset, langsung parallel masih aman.
-    const promises = [
-      ...images.map(url => loadImage(url)),
-      ...models.map(url => loadModel(url))
-    ];
-
-    await Promise.all(promises);
-
-    splashText.textContent = 'Semua aset siap! ✓';
-    setTimeout(finishSplash, 600);
-  }
-
-  function finishSplash() {
-    document.getElementById('splash').classList.add('fade-out');
-    setTimeout(() => {
-      document.getElementById('splash').style.display = 'none';
-      document.getElementById('main').classList.add('visible');
-      buildThumbs();
-    }, 800);
-  }
-
-  // Mulai loading saat DOM siap
-  document.addEventListener('DOMContentLoaded', preloadAssets);
-
-  /* ── Thumbnail Builder ───────────────────── */
-  function buildThumbs() {
-    const wrap = document.getElementById('hero-thumbs');
-    if (typeof TOPI_DATA === 'undefined') return;
-    TOPI_DATA.forEach(topi => {
-      const div = document.createElement('div');
-      div.className = 'thumb-item';
-      div.title = topi.nama;
-      div.onclick = () => window.location.href = `detail-topi.html?id=${topi.id}`;
-
-      const img = document.createElement('img');
-      img.src = topi.gambar;
-      img.alt = topi.nama;
-      img.onerror = () => {
-        img.remove();
-        const fb = document.createElement('div');
-        fb.className = 'thumb-fallback';
-        fb.textContent = '🎩';
-        div.appendChild(fb);
-      };
-
-      div.appendChild(img);
-      wrap.appendChild(div);
-    });
-  }
-
-  /* ── Toast ───────────────────────────────── */
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
-  }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
 </script>
+
 </body>
 </html>
