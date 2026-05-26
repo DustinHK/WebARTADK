@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>AR Try-On — Topi Adat Dayak Kenyah</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
@@ -194,9 +194,7 @@
 const isChrome = !navigator.userAgent.includes('Brave') && 
                  /Chrome/.test(navigator.userAgent) && 
                  /Android/.test(navigator.userAgent);
-if (isChrome) {
-  hatPos.y -= 0.5;
-}
+
 
 obj.position.copy(hatPos);
 obj.quaternion.copy(quat);
@@ -227,14 +225,14 @@ obj.quaternion.copy(quat);
       background: #000;
       color: var(--text-main);
       overflow: hidden;
-      height: 100vh;
+      height: 100dvh;
       width: 100vw;
     }
 
     /* ── AR SCENE ── */
     #ar-container { position: fixed; inset: 0; display: none; }
     #ar-container.active { display: block; }
-    a-scene { width: 100vw; height: 100vh; }
+    a-scene { width: 100vw; height: 100dvh; }
 
     /* ── LOADING OVERLAY ── */
     #loading-overlay {
