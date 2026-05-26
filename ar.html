@@ -886,7 +886,38 @@
 
       document.getElementById('loading-overlay').classList.add('hidden');
       showToast('AR siap! Arahkan wajah ke kamera 😊');
+const dbg = document.createElement('div');
+  dbg.id = 'dbg';
+  dbg.style.cssText = `
+    position:fixed; top:80px; left:10px; z-index:999;
+    background:rgba(0,0,0,0.8); color:#0f0;
+    font-size:11px; padding:8px; border-radius:8px;
+    font-family:monospace; line-height:1.6; max-width:200px;
+  `;
+  document.body.appendChild(dbg);
 
+  // Update setiap detik
+  setInterval(() => {
+    const video = document.querySelector('video');
+    const canvas = document.querySelector('canvas');
+    const lm10 = document.getElementById('lm-10');
+    
+    let lmPos = 'null';
+    if (lm10 && lm10.object3D) {
+      const v = new THREE.Vector3();
+      lm10.object3D.getWorldPosition(v);
+      lmPos = `${v.x.toFixed(3)}, ${v.y.toFixed(3)}, ${v.z.toFixed(3)}`;
+    }
+
+    dbg.innerHTML = `
+      V: ${video?.videoWidth}x${video?.videoHeight}<br>
+      C: ${canvas?.width}x${canvas?.height}<br>
+      W: ${window.innerWidth}x${window.innerHeight}<br>
+      DPR: ${window.devicePixelRatio}<br>
+      LM10: ${lmPos}<br>
+      UA: ${navigator.userAgent.includes('Brave') ? 'Brave' : navigator.userAgent.includes('Firefox') ? 'FF' : 'Chrome'}
+    `;
+  }, 1000);
       // Cache entities
       for (let n = 1; n <= TOTAL_HATS; n++) {
         hatEntities[n] = document.getElementById(`hat${n}`);
