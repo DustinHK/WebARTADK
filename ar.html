@@ -874,6 +874,16 @@
     const scene = document.getElementById('ar-scene');
 
     scene.addEventListener('arReady', () => {
+      const video = document.querySelector('video');
+  const canvas = document.querySelector('canvas');
+  setTimeout(() => {
+    console.log('VIDEO:', video?.videoWidth, 'x', video?.videoHeight);
+    console.log('CANVAS:', canvas?.width, 'x', canvas?.height);
+    console.log('WINDOW:', window.innerWidth, 'x', window.innerHeight);
+    console.log('DPR:', window.devicePixelRatio);
+    showToast(`V:${video?.videoWidth}x${video?.videoHeight} C:${canvas?.width}x${canvas?.height}`);
+  }, 2000);
+
       document.getElementById('loading-overlay').classList.add('hidden');
       showToast('AR siap! Arahkan wajah ke kamera 😊');
 
