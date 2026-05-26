@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AR Try-On — Topi Adat Dayak Kenyah</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- A-Frame HARUS dimuat SEBELUM MindAR -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <!-- MindAR Face -->
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-face-aframe.prod.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@600;700&display=swap" />
+<!-- Taruh SEBELUM script aframe -->
+<script>
+  // Patch WebGL agar preserveDrawingBuffer selalu true
+  const origGetContext = HTMLCanvasElement.prototype.getContext;
+  HTMLCanvasElement.prototype.getContext = function(type, attrs) {
+    if (type === 'webgl' || type === 'webgl2') {
+      attrs = attrs || {};
+      attrs.preserveDrawingBuffer = true;
+    }
+    return origGetContext.call(this, type, attrs);
+  };
+</script>
+  <script>
+    /* ── Komponen head-center (dari logika AR yang berhasil) ── */
+    // AFRAME.registerComponent('head-center', {
+    //   init() { this._freezeCount = 0; this._prevPos = null; },
+    //   remove() {},
+    //   tick() {
+    //     const lm10  = document.getElementById('lm-10');
+    //     const lm152 = document.getElementById('lm-152');
+    //     const lm234 = document.getElementById('lm-234');
+    //     const lm454 = document.getElementById('lm-454');
+    //     if (!lm10 || !lm152 || !lm234 || !lm454) return;
+
+    //     const getWP = (el) => {
+    //       const v = new THREE.Vector3();
+    //       el.object3D.getWorldPosition(v);
+    //       return v;
+    //     };
+
+    //     const top    = getWP(lm10);
+    //     const bottom = getWP(lm152);
+    //     const left   = getWP(lm234);
+    //     const right  = getWP(lm454);
+
+    //     if (top.lengthSq() < 0.0001) { this.el.object3D.visible = false; return; }
+
+    //     if (!this._prevPos) this._prevPos = top.clone();
+    //     const delta = top.distanceTo(this._prevPos);
+    //     if (delta < 0.000001) { this._freezeCount++; }
+    //     else { this._freezeCount = 0; this._prevPos.copy(top); }
+    //     if (this._freezeCount > 60) { this.el.object3D.visible = false; return; }
+
+    //     this.el.object3D.visible = true;
+
+    //     const yAxis = new THREE.Vector3().subVectors(top, bottom).normalize();
+    //     const xAxis = new THREE.Vector3().subVectors(right, left).normalize();
+    //     const zAxis = new THREE.Vector3().crossVectors(xAxis, yAxis).normalize();
+    //     xAxis.crossVectors(yAxis, zAxis).normalize();
+
+    //     if (zAxis.z < -0.1) { this.el.object3D.visible = false; return; }
+    //     this.el.object3D.visible = true;
+
+    //     const hatPos = top.clone();
+    //     const rotMat = new THREE.Matrix4().makeBasis(xAxis, yAxis, zAxis);
+    //     const quat   = new THREE.Quaternion().setFromRotationMatrix(rotMat);
+
+    //     const obj    = this.el.object3D;
+    //     const parent = obj.parent;
+    //     if (parent) {
+    //       const parentWorldInv = parent.matrixWorld.clone().invert();
+    //       hatPos.applyMatrix4(parentWorldInv);
+    //       const parentQ = new THREE.Quaternion();
+    //       parent.getWorldQuaternion(parentQ);
+    //       quat.premultiply(parentQ.invert());
+    //     }
+
+    //     obj.position.copy(hatPos);
+    //     obj.quaternion.copy(quat);
+    //   }
+    // });
+   AFRAME.registerComponent('head-center', {
+  init() { 
+    this._freezeCount = 0; 
+    this._prevPos = null;
+    this._faceVisible = false;
+  },
+  remove() {},
+  tick() {
+    const lm10  = document.getElementById('lm-10');
+    const lm152 = document.getElementById('lm-152');
+    const lm234 = document.getElementById('lm-234');
+    const lm454 = document.getElementById('lm-454');
+    if (!lm10 || !lm152 || !lm234 || !lm454) return;
+
+    const getWP = (el) => {
+      const v = new THREE.Vector3();
+      el.object3D.getWorldPosition(v);
+      return v;
+    };
+
+    const top    = getWP(lm10);
+    const bottom = getWP(lm152);
+    const left   = getWP(lm234);
+    const right  = getWP(lm454);
+
+    const statusEl = document.getElementById('face-status');
+
+    // Helper
+    const showWarning = () => { if (statusEl) statusEl.classList.remove('face-status-hidden'); };
+    const hideWarning = () => { if (statusEl) statusEl.classList.add('face-status-hidden'); };
+
+    if (top.lengthSq() < 0.0001) { 
+      this.el.object3D.visible = false;
+      if (this._faceVisible !== false) {
+        this._faceVisible = false;
+        showWarning(); // ← tampilkan warning
+      }
+      return; 
+    }
+
+    if (!this._prevPos) this._prevPos = top.clone();
+    const delta = top.distanceTo(this._prevPos);
+    if (delta < 0.000001) { this._freezeCount++; }
+    else { this._freezeCount = 0; this._prevPos.copy(top); }
+    if (this._freezeCount > 60) { 
+      this.el.object3D.visible = false;
+      if (this._faceVisible !== false) {
+        this._faceVisible = false;
+        showWarning(); // ← tampilkan warning
+      }
+      return; 
+    }
+
+    const yAxis = new THREE.Vector3().subVectors(top, bottom).normalize();
+    const xAxis = new THREE.Vector3().subVectors(right, left).normalize();
+    const zAxis = new THREE.Vector3().crossVectors(xAxis, yAxis).normalize();
+    xAxis.crossVectors(yAxis, zAxis).normalize();
+
+    if (zAxis.z < -0.1) { 
+      this.el.object3D.visible = false;
+      if (this._faceVisible !== false) {
+        this._faceVisible = false;
+        showWarning(); // ← tampilkan warning
+      }
+      return; 
+    }
+
+    // Wajah terdeteksi
+    this.el.object3D.visible = true;
+    if (this._faceVisible !== true) {
+      this._faceVisible = true;
+      hideWarning(); // ← sembunyikan warning
+    }
+
+    const hatPos = top.clone();
+    const rotMat = new THREE.Matrix4().makeBasis(xAxis, yAxis, zAxis);
+    const quat   = new THREE.Quaternion().setFromRotationMatrix(rotMat);
+
+    const obj    = this.el.object3D;
+    const parent = obj.parent;
+    if (parent) {
+      const parentWorldInv = parent.matrixWorld.clone().invert();
+      hatPos.applyMatrix4(parentWorldInv);
+      const parentQ = new THREE.Quaternion();
+      parent.getWorldQuaternion(parentQ);
+      quat.premultiply(parentQ.invert());
+    }
+
+    obj.position.copy(hatPos);
+    obj.quaternion.copy(quat);
+  }
+});
+
+  </script>
+
+  <style>
+    :root {
+      --gold:       #C9A84C;
+      --gold-light: #E8C96A;
+      --gold-dark:  #9A7A30;
+      --gold-glow:  rgba(201,168,76,0.25);
+      --brown-deep: #1A0F05;
+      --brown-mid:  #3D2B1A;
+      --text-main:  #F0E6D0;
+      --text-muted: #9E8A6E;
+      --border:     rgba(201,168,76,0.25);
+      --surface:    rgba(26,15,5,0.75);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #000;
+      color: var(--text-main);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ── AR SCENE ── */
+    #ar-container { position: fixed; inset: 0; display: none; }
+    #ar-container.active { display: block; }
+    a-scene { width: 100vw; height: 100vh; }
+
+    /* ── LOADING OVERLAY ── */
+    #loading-overlay {
+      position: fixed; inset: 0; z-index: 90;
+      background: rgba(10,6,2,0.9);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1.25rem;
+    }
+
+    #loading-overlay.hidden { display: none; }
+
+    .load-spinner {
+      width: 50px; height: 50px;
+      border: 3px solid rgba(201,168,76,0.15);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .load-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+
+    .load-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* ── HUD ── */
+    #hud {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 50;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    #hud.active { display: flex; }
+
+    /* Top Bar */
+    .hud-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      background: linear-gradient(180deg, rgba(10,6,2,0.7) 0%, transparent 100%);
+      pointer-events: auto;
+    }
+
+    .hud-logo {
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    .hud-logo-text {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1.1;
+    }
+
+    .hud-logo-sub {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .hud-actions {
+      display: flex; gap: 0.5rem;
+    }
+
+    .hud-btn {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.35rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 50px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      backdrop-filter: blur(12px);
+      color: var(--text-main);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .hud-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .hud-btn.danger {
+      border-color: rgba(255,100,100,0.4);
+      color: #ff8888;
+    }
+
+    .hud-btn.danger:hover { background: rgba(200,50,50,0.2); }
+
+    /* Bottom Panel */
+    .hud-bottom {
+      background: linear-gradient(0deg, rgba(10,6,2,0.85) 0%, transparent 100%);
+      padding: 0.75rem 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      pointer-events: auto;
+      
+    }
+
+    .instruction-chip {
+      background: rgba(10,6,2,0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 0.35rem 1rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* Hat Selector */
+    #hat-selector {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.25rem;
+      max-width: 100vw;
+      scrollbar-width: none;
+    }
+
+    #hat-selector::-webkit-scrollbar { display: none; }
+/* #face-status {
+  display: block !important;
+  color: #ff9999 !important;
+} */
+.face-status-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.face-warning {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(10,6,2,0.55);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,100,100,0.3);
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  transition: opacity 0.4s;
+}
+
+.face-warning p {
+  color: #ff9999;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.face-warning-sub {
+  color: rgba(255,180,180,0.7) !important;
+  font-size: 0.72rem !important;
+  font-weight: 400 !important;
+}
+
+.face-status-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+#face-status {
+  transition: opacity 0.3s;
+}
+    .hat-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      background: rgba(26,15,5,0.75);
+      backdrop-filter: blur(12px);
+      border: 2px solid rgba(201,168,76,0.2);
+      border-radius: 12px;
+      padding: 0.4rem 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-main);
+      flex-shrink: 0;
+      min-width: 60px;
+    }
+
+    .hat-btn img {
+      width: 48px; height: 40px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: var(--brown-mid);
+    }
+
+    .hat-btn span {
+      font-size: 0.6rem;
+      text-align: center;
+      line-height: 1.2;
+      color: var(--text-muted);
+      max-width: 60px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hat-btn:hover, .hat-btn.active {
+      border-color: var(--gold);
+      background: rgba(201,168,76,0.12);
+    }
+
+    .hat-btn.active span { color: var(--gold); }
+
+    /* Actions row */
+    .ar-actions {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
+    .ar-action-btn {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: all 0.15s;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .ar-action-btn.primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: #1A0F05;
+      box-shadow: 0 4px 16px rgba(201,168,76,0.3);
+    }
+
+    .ar-action-btn.secondary {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--text-main);
+    }
+
+    .ar-action-btn:hover { transform: scale(1.05); }
+
+    /* Info Panel (right side — shown when face detected) */
+    #info-panel {
+      position: fixed;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 130px;
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 0.85rem 0.75rem;
+      pointer-events: auto;
+      z-index: 51;
+      display: none;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    #info-panel.visible { display: flex; }
+
+    .info-panel-label {
+      font-size: 0.6rem;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-family: 'Cinzel', serif;
+    }
+
+    .info-panel-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .info-panel-user {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    .info-panel-divider {
+      height: 1px;
+      background: var(--border);
+    }
+
+    .info-panel-link {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.3rem;
+      padding: 0.45rem;
+      border-radius: 8px;
+      background: rgba(201,168,76,0.12);
+      border: 1px solid var(--border);
+      color: var(--gold);
+      font-size: 0.65rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .info-panel-link:hover { background: rgba(201,168,76,0.22); }
+
+    /* Slider Panel */
+    #slider-panel {
+      background: rgba(10,6,2,0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 0.7rem 1rem;
+      display: none;
+      flex-direction: column;
+      gap: 0.45rem;
+      width: min(280px, 90vw);
+    }
+
+    #slider-panel.visible { display: flex; }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .slider-row label {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      width: 60px;
+      flex-shrink: 0;
+    }
+
+    .slider-row input[type=range] {
+      flex: 1;
+      accent-color: var(--gold);
+      height: 4px;
+    }
+
+    .slider-val {
+      font-size: 0.65rem;
+      color: var(--gold);
+      width: 34px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 7rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: #1A0F05;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 0.55rem 1.4rem;
+      border-radius: 50px;
+      z-index: 200;
+      opacity: 0;
+      transition: all 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Mobile tweak */
+    @media (max-width: 480px) {
+      #info-panel { width: 110px; right: 0.6rem; }
+      .hud-btn span { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ LOADING OVERLAY ══ -->
+<div id="loading-overlay">
+  <div class="load-spinner"></div>
+  <div class="load-title">Memuat AR Engine</div>
+  <div class="load-sub">Harap izinkan akses kamera…</div>
+</div>
+
+<!-- ══ AR SCENE ══ -->
+<div id="ar-container">
+  <a-scene id="ar-scene"
+    mindar-face="autoStart: true; uiLoading: false; uiError: false;"
+    embedded color-space="sRGB"
+    renderer="colorManagement: true, physicallyCorrectLights, preserveDrawingBuffer: true"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false">
+
+    <a-assets timeout="15000"></a-assets>
+    <a-camera active="false" position="0 0 0"></a-camera>
+
+    <!-- Occluder anchor -->
+    <a-entity mindar-face-target="anchorIndex: 168" id="occluder-anchor"></a-entity>
+
+    <!-- Landmark referensi (tidak terlihat) -->
+    <a-entity mindar-face-target="anchorIndex: 10"  id="lm-10"  visible="false"></a-entity>
+    <a-entity mindar-face-target="anchorIndex: 152" id="lm-152" visible="false"></a-entity>
+    <a-entity mindar-face-target="anchorIndex: 234" id="lm-234" visible="false"></a-entity>
+    <a-entity mindar-face-target="anchorIndex: 454" id="lm-454" visible="false"></a-entity>
+
+    <!-- Hat container -->
+    <a-entity id="hat-container" head-center render-order="1">
+      <a-entity id="hat-offset" position="0 0 0">
+
+        <!-- HAT 1: Tapung Udeng -->
+        <a-entity id="hat1" position="0 0 0" visible="true">
+          <a-entity id="hat1-model" gltf-model="./assets/models/hat1.glb" scale="0.65 0.65 0.65" visible="false"></a-entity>
+          <a-entity id="hat1-placeholder">
+            <a-cylinder color="#8B5E3C" radius="0.09" height="0.14" position="0 0.07 0"></a-cylinder>
+            <a-cylinder color="#6B4A2E" radius="0.13" height="0.02" position="0 0 0"></a-cylinder>
+          </a-entity>
+        </a-entity>
+
+        <!-- HAT 2: Tapung Longe -->
+        <a-entity id="hat2" position="0 0 0" visible="false">
+          <a-entity id="hat2-model" gltf-model="./assets/models/hat2.glb" scale="0.65 0.65 0.65" visible="false"></a-entity>
+          <a-entity id="hat2-placeholder">
+            <a-cylinder color="#C0874F" radius="0.10" height="0.08" position="0 0.04 0"></a-cylinder>
+            <a-cylinder color="#A06835" radius="0.13" height="0.02" position="0 0 0"></a-cylinder>
+          </a-entity>
+        </a-entity>
+
+        <!-- HAT 3: Tapung Sekeduq -->
+        <a-entity id="hat3" position="0 0 0" visible="false">
+          <a-entity id="hat3-model" gltf-model="./assets/models/hat3.glb" scale="0.65 0.65 0.65" visible="false"></a-entity>
+          <a-entity id="hat3-placeholder">
+            <a-cone color="#6B8C42" radius-bottom="0.16" radius-top="0.01" height="0.14" position="0 0.07 0"></a-cone>
+            <a-cylinder color="#4E6B2E" radius="0.18" height="0.02" position="0 0 0"></a-cylinder>
+          </a-entity>
+        </a-entity>
+
+        <!-- HAT 4: Tapung Uwai -->
+        <a-entity id="hat4" position="0 0 0" visible="false">
+          <a-entity id="hat4-model" gltf-model="./assets/models/hat4.glb" scale="0.65 0.65 0.65" visible="false"></a-entity>
+          <a-entity id="hat4-placeholder">
+            <a-cylinder color="#A0784A" radius="0.09" height="0.10" position="0 0.05 0"></a-cylinder>
+            <a-cylinder color="#80583A" radius="0.12" height="0.02" position="0 0 0"></a-cylinder>
+          </a-entity>
+        </a-entity>
+
+        <!-- HAT 5: Tapung Pek -->
+        <a-entity id="hat5" position="0 0 0" visible="false">
+          <a-entity id="hat5-model" gltf-model="./assets/models/hat5.glb" scale="0.65 0.65 0.65" visible="false"></a-entity>
+          <a-entity id="hat5-placeholder">
+            <a-cylinder color="#B8860B" radius="0.10" height="0.12" position="0 0.06 0"></a-cylinder>
+            <a-cylinder color="#9A7200" radius="0.14" height="0.02" position="0 0 0"></a-cylinder>
+          </a-entity>
+        </a-entity>
+
+        <!-- HAT 6: Tapung Aban -->
+        <a-entity id="hat6" position="0 0 0" visible="false">
+          <a-entity id="hat6-model" gltf-model="./assets/models/hat6.glb" scale="0.65 0.65 0.65" visible="false"></a-entity>
+          <a-entity id="hat6-placeholder">
+            <a-cylinder color="#7B5EA7" radius="0.09" height="0.13" position="0 0.065 0"></a-cylinder>
+            <a-cylinder color="#5B3E87" radius="0.12" height="0.02" position="0 0 0"></a-cylinder>
+          </a-entity>
+        </a-entity>
+
+        <!-- HAT 7: Bluko Laki -->
+        <a-entity id="hat7" position="0 0 0" visible="false">
+          <a-entity id="hat7-model" gltf-model="./assets/models/hat7.glb" scale="0.65 0.65 0.65" visible="false"></a-entity>
+          <a-entity id="hat7-placeholder">
+            <a-cylinder color="#2C4A8C" radius="0.10" height="0.10" position="0 0.05 0"></a-cylinder>
+            <a-cylinder color="#1A3060" radius="0.13" height="0.02" position="0 0 0"></a-cylinder>
+          </a-entity>
+        </a-entity>
+
+        <!-- HAT 8: Bluko Leto -->
+        <a-entity id="hat8" position="0 0 0" visible="false">
+          <a-entity id="hat8-model" gltf-model="./assets/models/hat8.glb" scale="0.65 0.65 0.65" visible="false"></a-entity>
+          <a-entity id="hat8-placeholder">
+            <a-cylinder color="#8C2C5E" radius="0.09" height="0.11" position="0 0.055 0"></a-cylinder>
+            <a-cylinder color="#6A1A44" radius="0.12" height="0.02" position="0 0 0"></a-cylinder>
+          </a-entity>
+        </a-entity>
+
+      </a-entity><!-- /hat-offset -->
+    </a-entity><!-- /hat-container -->
+  </a-scene>
+</div>
+
+<!-- ══ INFO PANEL (samping kanan) ══ -->
+<div id="info-panel">
+  <div class="info-panel-label">Topi Aktif</div>
+  <div class="info-panel-name" id="ip-name">—</div>
+  <div class="info-panel-divider"></div>
+  <div class="info-panel-label">Pengguna</div>
+  <div class="info-panel-user" id="ip-user">—</div>
+  <div class="info-panel-divider"></div>
+  <div class="info-panel-label">Fungsi</div>
+  <div class="info-panel-user" id="ip-fungsi">—</div>
+  <div class="info-panel-divider"></div>
+  <a class="info-panel-link" id="ip-link" href="#">
+  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+  </svg>
+  Info Lengkap
+</a>
+</div>
+<div id="face-status" class="face-warning face-status-hidden">
+  <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(255,100,100,0.9)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <circle cx="8.5" cy="10" r="1" fill="rgba(255,100,100,0.9)"/>
+    <circle cx="15.5" cy="10" r="1" fill="rgba(255,100,100,0.9)"/>
+    <path d="M9 15c.83 1 2.17 1.5 3 1.5s2.17-.5 3-1.5"/>
+    <line x1="2" y1="2" x2="22" y2="22" stroke="rgba(255,80,80,0.95)" stroke-width="1.8"/>
+  </svg>
+  <p>Wajah tidak terdeteksi</p>
+  <p class="face-warning-sub">Arahkan wajah ke kamera</p>
+</div>
+<!-- ══ HUD ══ -->
+<div id="hud">
+  <!-- Top bar -->
+  <div class="hud-top">
+    <button class="hud-btn" onclick="stopAR()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
+      </svg>
+      Kembali
+    </button>
+    <div class="hud-actions">
+      <button class="hud-btn" onclick="toggleInfoPanel()">
+  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="12" y1="8" x2="12" y2="12"/>
+    <line x1="12" y1="16" x2="12.01" y2="16"/>
+  </svg>
+  <span>Info</span>
+</button>
+    </div>
+  </div>
+
+  <!-- Bottom controls -->
+  <div class="hud-bottom">
+    <p class="instruction-chip">Arahkan wajah ke kamera agar topi muncul</p>
+  
+
+   
+
+    <!-- Hat Selector -->
+    <div id="hat-selector">
+      <!-- Diisi via JS dari TOPI_DATA -->
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="ar-actions">
+      <button class="ar-action-btn secondary" onclick="resetPosScale()">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+    <path d="M3 3v5h5"/>
+  </svg>
+  Reset
+</button>
+      <button class="ar-action-btn primary" onclick="takeScreenshot()">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+    <circle cx="12" cy="13" r="4"/>
+  </svg>
+  Foto
+</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script src="js/data.js"></script>
+<script>
+  /* ── State ── */
+  let currentHat = 1;
+  const hatEntities = {};
+  const TOTAL_HATS = 8;
+  const DEFAULT_SCALE = 0.65;
+  let pos = { x: 0, y: 0, z: 0 };
+  let scale = DEFAULT_SCALE;
+  let infoPanelVisible = false;
+  let sliderVisible = false;
+
+  /* ── Build hat selector buttons ── */
+  function buildHatSelector() {
+    const sel = document.getElementById('hat-selector');
+    TOPI_DATA.forEach((topi, i) => {
+      const btn = document.createElement('div');
+      btn.className = 'hat-btn' + (i === 0 ? ' active' : '');
+      btn.id = `hat-btn-${topi.id}`;
+      btn.onclick = () => selectHat(topi.id, btn);
+
+      const img = document.createElement('img');
+      img.src = topi.gambar;
+      img.alt = topi.nama;
+      img.onerror = () => {
+        img.style.display = 'none';
+        const em = document.createElement('span');
+        em.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20"/><path d="M4 20c0-4 2-8 8-10 6 2 8 6 8 10"/></svg>`; 
+        em.style.fontSize = '1.5rem';
+        btn.insertBefore(em, btn.firstChild);
+      };
+
+      const label = document.createElement('span');
+      label.textContent = topi.nama;
+
+      btn.appendChild(img);
+      btn.appendChild(label);
+      sel.appendChild(btn);
+    });
+  }
+
+  /* ── Boot ── */
+  window.addEventListener('load', () => {
+    buildHatSelector();
+    startAR();
+  });
+
+  function startAR() {
+    document.getElementById('ar-container').classList.add('active');
+    document.getElementById('hud').classList.add('active');
+
+    const scene = document.getElementById('ar-scene');
+
+    scene.addEventListener('arReady', () => {
+      document.getElementById('loading-overlay').classList.add('hidden');
+      showToast('AR siap! Arahkan wajah ke kamera 😊');
+
+      // Cache entities
+      for (let n = 1; n <= TOTAL_HATS; n++) {
+        hatEntities[n] = document.getElementById(`hat${n}`);
+      }
+
+      // Activate models
+      for (let n = 1; n <= TOTAL_HATS; n++) {
+        const modelEl = document.getElementById(`hat${n}-model`);
+        const placeholder = document.getElementById(`hat${n}-placeholder`);
+        if (!modelEl) continue;
+
+        const activate = () => {
+          modelEl.setAttribute('visible', true);
+          if (placeholder) placeholder.setAttribute('visible', false);
+          const obj = modelEl.getObject3D('mesh');
+          if (obj) obj.traverse(node => { if (node.isMesh) node.renderOrder = 1; });
+        };
+
+        if (modelEl.getObject3D && modelEl.getObject3D('mesh')) activate();
+        else modelEl.addEventListener('model-loaded', activate, { once: true });
+      }
+
+      // Show info panel & update
+      document.getElementById('info-panel').classList.add('visible');
+      infoPanelVisible = true;
+      updateInfoPanel(1);
+      // Tampilkan warning saat AR ready (belum ada wajah)
+const statusEl = document.getElementById('face-status');
+if (statusEl) statusEl.classList.remove('face-status-hidden');
+    }, { once: true });
+
+    scene.addEventListener('arError', () => {
+      document.getElementById('loading-overlay').classList.add('hidden');
+      showToast('⚠️ Gagal memuat AR. Coba reload halaman.');
+    }, { once: true });
+
+    scene.addEventListener('loaded', () => {
+      // Load occluder
+      const occluderAnchor = document.getElementById('occluder-anchor');
+      if (occluderAnchor) {
+        const loader = new THREE.GLTFLoader();
+        loader.load('/assets/models/headOccluder.glb', (gltf) => {
+          const model = gltf.scene;
+          model.position.set(0, 0, 0.04);
+          model.scale.set(0.054, 0.054, 0.054);
+          model.renderOrder = -1;
+          model.traverse(node => {
+            if (node.isMesh) {
+              node.material = new THREE.MeshBasicMaterial({
+                colorWrite: false, depthWrite: true, side: THREE.FrontSide
+              });
+              node.renderOrder = -1;
+            }
+          });
+          occluderAnchor.object3D.add(model);
+        }, undefined, () => console.warn('headOccluder.glb tidak ditemukan'));
+      }
+    }, { once: true });
+
+    // autoStart: true di a-scene — MindAR mulai otomatis, tidak perlu manual start
+    // Fallback: sembunyikan loading jika arReady tidak fired dalam 25 detik
+    setTimeout(() => {
+      const overlay = document.getElementById('loading-overlay');
+      if (overlay && !overlay.classList.contains('hidden')) {
+        overlay.classList.add('hidden');
+        showToast('⚠️ AR timeout. Pastikan kamera diizinkan & coba reload.');
+      }
+    }, 25000);
+  }
+
+  function stopAR() {
+    const scene = document.getElementById('ar-scene');
+    try { scene.systems['mindar-face-system'].stop(); } catch(e) {}
+    window.location.href = 'index.html';
+  }
+
+  /* ── Hat Selection ── */
+  function selectHat(num, btn) {
+    for (let i = 1; i <= TOTAL_HATS; i++) {
+      if (hatEntities[i]) hatEntities[i].setAttribute('visible', false);
+    }
+    currentHat = num;
+    if (hatEntities[num]) hatEntities[num].setAttribute('visible', true);
+
+    document.querySelectorAll('.hat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    applyTransform();
+    updateInfoPanel(num);
+    showToast(`${TOPI_DATA[num-1].nama} dipilih 🎩`);
+  }
+
+  /* ── Info Panel ── */
+  function updateInfoPanel(num) {
+    const topi = TOPI_DATA[num - 1];
+    if (!topi) return;
+    document.getElementById('ip-name').textContent = topi.nama;
+    document.getElementById('ip-user').textContent = topi.pengguna;
+    document.getElementById('ip-fungsi').textContent = topi.fungsi;
+    document.getElementById('ip-link').href = `detail-topi.html?id=${topi.id}`;
+  }
+
+  function toggleInfoPanel() {
+    const panel = document.getElementById('info-panel');
+    infoPanelVisible = !infoPanelVisible;
+    panel.classList.toggle('visible', infoPanelVisible);
+  }
+
+  /* ── Slider ── */
+  function toggleSlider() {
+    sliderVisible = !sliderVisible;
+    document.getElementById('slider-panel').classList.toggle('visible', sliderVisible);
+  }
+
+  function onSlider() {
+    pos.y  = parseFloat(document.getElementById('sl-y').value);
+    pos.z  = parseFloat(document.getElementById('sl-z').value);
+    scale  = parseFloat(document.getElementById('sl-s').value);
+    document.getElementById('val-y').textContent = pos.y.toFixed(2);
+    document.getElementById('val-z').textContent = pos.z.toFixed(2);
+    document.getElementById('val-s').textContent = scale.toFixed(2);
+    applyTransform();
+  }
+
+  function resetPosScale() {
+    pos = { x: 0, y: 0, z: 0 };
+    scale = DEFAULT_SCALE;
+    document.getElementById('sl-y').value = 0;
+    document.getElementById('sl-z').value = 0;
+    document.getElementById('sl-s').value = DEFAULT_SCALE;
+    document.getElementById('val-y').textContent = '0.00';
+    document.getElementById('val-z').textContent = '0.00';
+    document.getElementById('val-s').textContent = DEFAULT_SCALE.toFixed(2);
+    applyTransform();
+    showToast('Posisi direset ↺');
+  }
+
+  function applyTransform() {
+    const offset = document.getElementById('hat-offset');
+    if (offset) offset.setAttribute('position', `${pos.x} ${pos.y} ${pos.z}`);
+    const model = document.getElementById(`hat${currentHat}-model`);
+    const ph    = document.getElementById(`hat${currentHat}-placeholder`);
+    if (model) model.setAttribute('scale', `${scale} ${scale} ${scale}`);
+    if (ph)    ph.setAttribute('scale', `${scale} ${scale} ${scale}`);
+  }
+
+  /* ── Screenshot ── */
+ function takeScreenshot() {
+  showToast('Mengambil foto…');
+
+  setTimeout(() => {
+    try {
+      const arCanvas = document.querySelector('canvas');
+      if (!arCanvas) { showToast('Canvas tidak ditemukan'); return; }
+
+      const w = arCanvas.width;
+      const h = arCanvas.height;
+      const combined = document.createElement('canvas');
+      combined.width = w;
+      combined.height = h;
+      const ctx = combined.getContext('2d');
+
+      // Gambar video dulu sebagai background
+      const video = document.querySelector('video');
+      if (video && video.readyState >= 2) {
+        ctx.save();
+        ctx.translate(w, 0);
+        ctx.scale(-1, 1); // flip horizontal (kamera depan)
+        ctx.drawImage(video, 0, 0, w, h);
+        ctx.restore();
+      }
+
+      // Overlay AR canvas di atasnya
+      ctx.drawImage(arCanvas, 0, 0, w, h);
+
+      const url = combined.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = `topi-dayak-${Date.now()}.png`;
+      link.href = url;
+      link.click();
+      showToast('📸 Foto tersimpan!');
+    } catch(e) {
+      showToast('Gagal: ' + e.message);
+      console.error(e);
+    }
+  }, 300);
+}
+
+  /* ── Toast ── */
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+ 
+</script>
+</body>
+</html>

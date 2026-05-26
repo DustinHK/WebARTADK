@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detail Topi — Dayak Kenyah</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+
+    /* ── Hero Image ── */
+    .detail-hero {
+      position: relative;
+      width: 100%;
+      max-height: 300px;
+      overflow: hidden;
+      background: var(--brown-mid);
+    }
+
+    .detail-hero-img {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .detail-hero-gradient {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 120px;
+      background: linear-gradient(0deg, var(--brown-deep), transparent);
+      pointer-events: none;
+    }
+
+    .detail-hero-placeholder {
+      width: 100%;
+      height: 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      background: linear-gradient(135deg, var(--brown-mid), var(--brown-dark));
+    }
+
+    .detail-hero-placeholder-icon {
+      font-size: 4rem;
+      opacity: 0.3;
+    }
+
+    .detail-hero-placeholder-text {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    /* Upload button (appears over placeholder) */
+    .upload-hint {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      background: rgba(201,168,76,0.15);
+      border: 1px dashed var(--gold-dark);
+      border-radius: 8px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.7rem;
+      color: var(--gold);
+      font-family: 'Nunito', sans-serif;
+      cursor: default;
+    }
+
+    /* ── Content ── */
+    .detail-content {
+      padding: 0 1.25rem 2rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Nama & Badge */
+    .detail-head {
+      padding: 1.25rem 0 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .detail-kategori {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .detail-nama {
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--cream);
+      line-height: 1.15;
+    }
+
+    .detail-nama span {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* Info Cards */
+    .info-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin: 1rem 0;
+    }
+
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .info-card-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-card-value {
+      font-family: 'Crimson Text', serif;
+      font-size: 0.92rem;
+      color: var(--text-main);
+      line-height: 1.4;
+    }
+
+    /* Makna section */
+    .makna-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      border-radius: var(--radius-sm);
+      padding: 1.1rem 1.25rem;
+      margin: 0.75rem 0 1.25rem;
+    }
+
+    .makna-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+
+    .makna-text {
+      font-family: 'Crimson Text', serif;
+      font-size: 1.02rem;
+      color: var(--text-main);
+      line-height: 1.7;
+      font-style: italic;
+    }
+
+    /* Detail Image section */
+    .detail-img-section {
+      margin: 1rem 0;
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.6rem;
+    }
+
+    .detail-img-full {
+      width: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: var(--brown-mid);
+    }
+
+    .detail-img-full img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .detail-img-placeholder {
+      width: 100%;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-align: center;
+    }
+
+    .detail-img-placeholder .icon { font-size: 2.5rem; opacity: 0.25; }
+    .detail-img-placeholder p {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+
+    /* CTA buttons */
+    .detail-cta {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+
+    /* Navigation prev/next */
+    .nav-prev-next {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .nav-card {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      max-width: 48%;
+    }
+
+    .nav-card:hover {
+      border-color: var(--gold-dark);
+      transform: translateY(-2px);
+    }
+
+    .nav-card-dir {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .nav-card-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      color: var(--gold);
+    }
+
+    .nav-card.next { text-align: right; margin-left: auto; }
+    .nav-card.prev { margin-right: auto; }
+
+    @media (max-width: 400px) {
+      .info-cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header (dynamic title) -->
+<div class="page-header" id="page-header">
+  <a href="informasi.html" class="back-btn">←</a>
+  <div>
+    <div class="page-header-title" id="header-title">Detail Topi</div>
+    <div class="page-header-sub">Dayak Kenyah</div>
+  </div>
+</div>
+
+<div class="page-content" id="page-body">
+
+  <!-- Hero Image -->
+  <div class="detail-hero" id="hero-wrap">
+    <div class="detail-hero-placeholder">
+      <span class="detail-hero-placeholder-icon">🎩</span>
+      <span class="detail-hero-placeholder-text">Memuat gambar…</span>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="detail-content">
+    <div class="detail-head">
+      <div class="detail-kategori" id="kategori-wrap"><!-- badge --></div>
+      <h1 class="detail-nama" id="detail-nama">—</h1>
+    </div>
+
+    <!-- Info cards: bahan, pengguna, fungsi -->
+    <div class="info-cards" id="info-cards"><!-- JS --></div>
+
+    <!-- Makna Filosofis -->
+    <div class="makna-section">
+      <div class="makna-label">◆ Makna Filosofis</div>
+      <div class="makna-text" id="makna-text">—</div>
+    </div>
+
+    <!-- Gambar Detail -->
+    <div class="detail-img-section">
+      <div class="section-title">Gambar Detail</div>
+      <div class="detail-img-full" id="detail-img-wrap">
+        <div class="detail-img-placeholder">
+          <span class="icon">🖼</span>
+          <p>Ganti <code>gambarDetail</code> di <code>js/data.js</code> dengan path gambar detail Anda</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="detail-cta">
+      <a class="btn-primary" id="cta-ar" href="ar.html">🎭 Coba di AR</a>
+      <a class="btn-secondary" href="informasi.html">← Kembali ke Daftar</a>
+    </div>
+
+    <!-- Prev / Next navigation -->
+    <div class="nav-prev-next" id="nav-prev-next"><!-- JS --></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+  // ── Load topi by URL param ──────────────────────────────
+  const id = parseInt(new URLSearchParams(window.location.search).get('id')) || 1;
+  const topi = getTopiById(id);
+
+  if (!topi) {
+    document.getElementById('detail-nama').textContent = 'Topi tidak ditemukan';
+  } else {
+    // Header
+    document.getElementById('header-title').textContent = topi.nama;
+    document.title = `${topi.nama} — Dayak Kenyah`;
+
+    // Hero Image
+    const heroWrap = document.getElementById('hero-wrap');
+    heroWrap.innerHTML = `
+      <img class="detail-hero-img" src="${topi.gambar}" alt="${topi.nama}"
+           onerror="this.parentElement.innerHTML = '<div class=\\'detail-hero-placeholder\\'><span class=\\'detail-hero-placeholder-icon\\'>🎩</span><span class=\\'detail-hero-placeholder-text\\'>Tambahkan gambar di js/data.js</span></div>'" />
+      <div class="detail-hero-gradient"></div>
+    `;
+
+    // Badge
+    const bClass = topi.kategori === 'Tapung' ? 'badge-tapung' : 'badge-bluko';
+    document.getElementById('kategori-wrap').innerHTML =
+      `<span class="badge ${bClass}">${topi.kategori}</span>`;
+
+    // Nama
+    document.getElementById('detail-nama').textContent = topi.nama;
+
+    // Info Cards
+    const cards = [
+      { label: '🧱 Bahan / Material', value: topi.bahan },
+      { label: '👤 Pengguna',         value: topi.pengguna },
+      { label: '🎯 Fungsi / Kegunaan', value: topi.fungsi }
+    ];
+
+    const cardsWrap = document.getElementById('info-cards');
+    cardsWrap.innerHTML = cards.map(c => `
+      <div class="info-card">
+        <div class="info-card-label">${c.label}</div>
+        <div class="info-card-value">${c.value}</div>
+      </div>
+    `).join('');
+
+    // Makna
+    document.getElementById('makna-text').textContent = topi.makna;
+
+    // Gambar Detail
+    const detailImgWrap = document.getElementById('detail-img-wrap');
+    if (topi.gambarDetail) {
+      detailImgWrap.innerHTML = `
+        <img src="${topi.gambarDetail}" alt="Detail ${topi.nama}" style="width:100%;display:block;object-fit:cover;"
+             onerror="this.parentElement.innerHTML = '<div class=\\'detail-img-placeholder\\'><span class=\\'icon\\'>🖼</span><p>Ganti gambarDetail di js/data.js dengan path gambar Anda</p></div>'" />
+      `;
+    }
+
+    // Prev / Next
+    const navWrap = document.getElementById('nav-prev-next');
+    const prevTopi = TOPI_DATA.find(t => t.id === id - 1);
+    const nextTopi = TOPI_DATA.find(t => t.id === id + 1);
+
+    navWrap.innerHTML = `
+      ${prevTopi
+        ? `<a class="nav-card prev" href="detail-topi.html?id=${prevTopi.id}">
+             <span class="nav-card-dir">← Sebelumnya</span>
+             <span class="nav-card-name">${prevTopi.nama}</span>
+           </a>`
+        : '<div></div>'}
+      ${nextTopi
+        ? `<a class="nav-card next" href="detail-topi.html?id=${nextTopi.id}">
+             <span class="nav-card-dir">Selanjutnya →</span>
+             <span class="nav-card-name">${nextTopi.nama}</span>
+           </a>`
+        : '<div></div>'}
+    `;
+  }
+</script>
+</body>
+</html>

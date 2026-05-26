@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Topi Adat Dayak Kenyah — WebAR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IM+Fell+English:ital@0;1&family=Josefin+Sans:wght@300;400;600&display=swap" />
+  <style>
+    :root {
+      --gold:        #C9A84C;
+      --gold-light:  #E8C96A;
+      --gold-dark:   #8A6820;
+      --gold-pale:   #F5E6B8;
+      --red-earth:   #7A2D1A;
+      --red-mid:     #A63D25;
+      --brown-deep:  #120A02;
+      --brown-dark:  #1E1005;
+      --brown-mid:   #2E1A08;
+      --brown-light: #4A2E10;
+      --cream:       #F0E6D0;
+      --cream-dim:   #C8B89A;
+      --text-muted:  #9E8A6E;
+      --text-dim:    #5A4A35;
+      --border:      rgba(201,168,76,0.18);
+      --border-bright: rgba(201,168,76,0.45);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Josefin Sans', sans-serif;
+      background: var(--brown-deep);
+      color: var(--cream);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ══════════════════════════════════
+       BATIK PATTERN BACKGROUND
+    ══════════════════════════════════ */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 28px,
+          rgba(201,168,76,0.025) 28px,
+          rgba(201,168,76,0.025) 30px
+        ),
+        repeating-linear-gradient(
+          -45deg,
+          transparent,
+          transparent 28px,
+          rgba(201,168,76,0.025) 28px,
+          rgba(201,168,76,0.025) 30px
+        );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ══════════════════════════════════
+       SPLASH SCREEN
+    ══════════════════════════════════ */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--brown-deep);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    #splash.fade-out {
+      opacity: 0;
+      transform: scale(1.04);
+      pointer-events: none;
+    }
+
+    /* Top & bottom tribal border */
+    .tribal-border {
+  position: absolute;
+  left: 0; right: 0;
+  height: 4px;  /* ← tipis elegan */
+  display: flex;
+}
+.tribal-border.top { top: 0; }
+.tribal-border.bottom { bottom: 0; }
+.tribal-border-inner {
+  flex: 1;  /* ← ini yang hilang! */
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+    .splash-medallion {
+      position: relative;
+      width: 110px; height: 110px;
+      margin-bottom: 2rem;
+    }
+
+    .medallion-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      animation: rotateRing 12s linear infinite;
+      background:
+        repeating-conic-gradient(
+          from 0deg,
+          transparent 0deg 30deg,
+          rgba(201,168,76,0.08) 30deg 60deg
+        );
+    }
+
+    .medallion-ring-2 {
+      position: absolute;
+      inset: 10px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.4);
+      animation: rotateRing 8s linear infinite reverse;
+    }
+
+    .medallion-core {
+      position: absolute;
+      inset: 18px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, var(--brown-mid), var(--brown-deep));
+      border: 1px solid rgba(201,168,76,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.4rem;
+    }
+
+    @keyframes rotateRing {
+      to { transform: rotate(360deg); }
+    }
+
+    .splash-label {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 5px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+      opacity: 0.8;
+    }
+
+    .splash-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 8vw, 3rem);
+      font-weight: 900;
+      color: var(--cream);
+      line-height: 1.1;
+      text-align: center;
+      margin-bottom: 0.25rem;
+    }
+
+    .splash-title em {
+      color: var(--gold);
+      font-style: italic;
+      display: block;
+    }
+
+    .splash-desc {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin: 0.75rem 0 2.5rem;
+    }
+
+    /* Progress track */
+    .progress-track {
+      width: 180px;
+      position: relative;
+    }
+
+    .progress-deco {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-line {
+      flex: 1;
+      height: 2px;
+      background: rgba(201,168,76,0.15);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold-light));
+      width: 0%;
+      animation: fillBar 2.5s cubic-bezier(.4,0,.2,1) forwards;
+    }
+
+    @keyframes fillBar {
+      0%   { width: 0%; }
+      50%  { width: 70%; }
+      85%  { width: 92%; }
+      100% { width: 100%; }
+    }
+
+    .progress-diamond {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
+
+    .progress-text {
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    /* ══════════════════════════════════
+       MAIN LAYOUT
+    ══════════════════════════════════ */
+    #main {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    #main.visible { display: flex; }
+
+    /* ══════════════════════════════════
+       HEADER BAR
+    ══════════════════════════════════ */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(18, 10, 2, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tribal-strip {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border-bright);
+      background: radial-gradient(circle, var(--brown-mid), var(--brown-deep));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .brand-text {
+      line-height: 1.1;
+    }
+
+    .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .brand-sub {
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .header-cta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 1rem;
+      background: linear-gradient(135deg, var(--red-earth), var(--red-mid));
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 4px;
+      color: var(--gold-pale);
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .header-cta:hover {
+      background: linear-gradient(135deg, var(--red-mid), #c44e30);
+      box-shadow: 0 4px 20px rgba(122,45,26,0.5);
+    }
+
+    /* ══════════════════════════════════
+       HERO
+    ══════════════════════════════════ */
+    .hero {
+      position: relative;
+      padding: 4rem 1.5rem 3rem;
+      text-align: center;
+      overflow: hidden;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Decorative mandala / sunburst behind hero */
+    .hero-sunburst {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 420px; height: 420px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, rgba(201,168,76,0.07) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    .hero-sunburst::before {
+      content: '';
+      position: absolute;
+      inset: 30px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.08);
+    }
+
+    .hero-sunburst::after {
+      content: '';
+      position: absolute;
+      inset: 70px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.06);
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.65rem;
+      letter-spacing: 4px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+      content: '◆';
+      font-size: 0.5rem;
+      opacity: 0.5;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 7vw, 3.5rem);
+      font-weight: 900;
+      color: var(--cream);
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-title .gold { color: var(--gold); }
+    .hero-title .italic { font-style: italic; }
+
+    .hero-subtitle {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 340px;
+      margin: 0.75rem auto 2.5rem;
+      line-height: 1.7;
+    }
+
+    /* Ornament line */
+    .ornament-line {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      max-width: 240px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .orn-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+    }
+
+    .orn-center {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--gold);
+      font-size: 0.55rem;
+    }
+
+    /* Topi thumbnail strip */
+    .thumb-strip {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .thumb-item {
+      position: relative;
+      width: 62px; height: 62px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--brown-mid);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s;
+      flex-shrink: 0;
+    }
+
+    .thumb-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 6px;
+      border: 2px solid transparent;
+      transition: all 0.25s;
+    }
+
+    .thumb-item:hover {
+      transform: translateY(-5px) scale(1.06);
+      border-color: var(--gold);
+      box-shadow: 0 8px 24px rgba(201,168,76,0.25);
+    }
+
+    .thumb-item:hover::after {
+      border-color: rgba(201,168,76,0.3);
+    }
+
+    .thumb-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    .thumb-fallback {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      background: linear-gradient(135deg, var(--brown-mid), var(--brown-light));
+      color: var(--gold);
+    }
+
+    /* CTA Button */
+    .btn-ar {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.9rem 2.2rem;
+      background: linear-gradient(135deg, var(--red-earth) 0%, var(--red-mid) 100%);
+      border: 1px solid rgba(201,168,76,0.4);
+      border-radius: 4px;
+      color: var(--gold-pale);
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-ar::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      transition: left 0.4s;
+    }
+
+    .btn-ar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(122,45,26,0.55), 0 0 0 1px rgba(201,168,76,0.35);
+    }
+
+    .btn-ar:hover::before { left: 100%; }
+
+    .btn-icon {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(201,168,76,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    /* ══════════════════════════════════
+       DIVIDER TRIBAL
+    ══════════════════════════════════ */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0 1.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .div-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-bright));
+    }
+
+    .div-line.rev {
+      background: linear-gradient(90deg, var(--border-bright), transparent);
+    }
+
+    .div-motif {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 1rem;
+    }
+
+    .div-dot {
+      width: 5px; height: 5px;
+      background: var(--gold);
+      transform: rotate(45deg);
+    }
+
+    .div-dash {
+      width: 20px; height: 1px;
+      background: var(--gold-dark);
+    }
+
+    /* ══════════════════════════════════
+       MENU SECTION
+    ══════════════════════════════════ */
+    .menu-section {
+      padding: 2.5rem 1.25rem 1.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-label-text {
+      font-size: 0.62rem;
+      letter-spacing: 4px;
+      color: var(--gold);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .section-label-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* AR Card — Hero card */
+    .card-ar-main {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.75rem;
+      background:
+        linear-gradient(135deg, rgba(122,45,26,0.35) 0%, rgba(46,26,8,0.9) 100%);
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s;
+    }
+
+    .card-ar-main::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--red-earth), var(--gold), var(--red-earth));
+    }
+
+    .card-ar-main::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
+    }
+
+    /* Diagonal pattern on card */
+    .card-ar-main .card-pattern {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -55deg,
+        transparent,
+        transparent 20px,
+        rgba(201,168,76,0.018) 20px,
+        rgba(201,168,76,0.018) 21px
+      );
+      pointer-events: none;
+    }
+
+    .card-ar-main:hover {
+      border-color: var(--gold);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(122,45,26,0.4), 0 0 0 1px rgba(201,168,76,0.2);
+    }
+
+    .card-ar-emblem {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--red-earth), var(--red-mid));
+      border: 2px solid rgba(201,168,76,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem;
+      flex-shrink: 0;
+      box-shadow: 0 4px 20px rgba(122,45,26,0.5);
+      position: relative;
+    }
+
+    .card-ar-emblem::after {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.2);
+    }
+
+    .card-ar-body { flex: 1; }
+
+    .card-ar-label {
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      color: var(--red-mid);
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    .card-ar-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--cream);
+      line-height: 1.2;
+      margin-bottom: 0.35rem;
+    }
+
+    .card-ar-desc {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .card-ar-arrow {
+      font-size: 1.2rem;
+      color: var(--gold-dark);
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+
+    .card-ar-main:hover .card-ar-arrow { transform: translateX(4px); }
+
+    /* Small menu cards grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    .menu-card {
+      background: rgba(30,16,5,0.8);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s;
+    }
+
+    .menu-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: linear-gradient(180deg, var(--gold-dark), transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .menu-card:hover {
+      border-color: rgba(201,168,76,0.4);
+      background: rgba(46,26,8,0.9);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    .menu-card:hover::before { opacity: 1; }
+
+    .card-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .card-arrow {
+      font-size: 0.75rem;
+      color: var(--gold-dark);
+      margin-top: auto;
+      opacity: 0;
+      transition: all 0.2s;
+    }
+
+    .menu-card:hover .card-arrow { opacity: 1; }
+
+    /* ══════════════════════════════════
+       QUOTE / TAGLINE STRIP
+    ══════════════════════════════════ */
+    .quote-strip {
+      margin: 1rem 1.25rem 0;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 1.25rem 1.5rem;
+      border-left: 3px solid var(--gold-dark);
+      background: rgba(201,168,76,0.04);
+      border-radius: 0 6px 6px 0;
+    }
+
+    .quote-text {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--cream-dim);
+      line-height: 1.7;
+      margin-bottom: 0.4rem;
+    }
+
+    .quote-source {
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    /* ══════════════════════════════════
+       FOOTER
+    ══════════════════════════════════ */
+    .site-footer {
+      margin-top: auto;
+      padding: 1.5rem;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      position: relative;
+    }
+
+    .footer-motif {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-diamond {
+      width: 5px; height: 5px;
+      transform: rotate(45deg);
+    }
+
+    .footer-diamond:nth-child(1),
+    .footer-diamond:nth-child(5) { background: var(--text-dim); }
+    .footer-diamond:nth-child(2),
+    .footer-diamond:nth-child(4) { background: var(--gold-dark); }
+    .footer-diamond:nth-child(3) { background: var(--gold); }
+
+    .footer-text {
+      font-size: 0.67rem;
+      letter-spacing: 1.5px;
+      color: var(--text-dim);
+    }
+
+    .footer-text strong {
+      color: var(--text-muted);
+    }
+
+    /* ══════════════════════════════════
+       TOAST
+    ══════════════════════════════════ */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: linear-gradient(135deg, var(--brown-mid), var(--brown-dark));
+      border: 1px solid var(--border-bright);
+      color: var(--gold-pale);
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+      padding: 0.6rem 1.4rem;
+      border-radius: 4px;
+      z-index: 500;
+      opacity: 0;
+      transition: all 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ══════════════════════════════════
+       ANIMATIONS — Entrance
+    ══════════════════════════════════ */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-up:nth-child(1) { animation-delay: 0.1s; }
+    .fade-up:nth-child(2) { animation-delay: 0.2s; }
+    .fade-up:nth-child(3) { animation-delay: 0.3s; }
+    .fade-up:nth-child(4) { animation-delay: 0.4s; }
+    .fade-up:nth-child(5) { animation-delay: 0.5s; }
+
+    /* ══════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════ */
+    @media (max-width: 600px) {
+      .cards-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .header-inner { padding: 0.65rem 1rem; }
+      .hero { padding: 2.5rem 1rem 2rem; }
+      .menu-section { padding: 2rem 1rem 1rem; }
+
+      .card-ar-main {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem 1.25rem;
+      }
+
+      .card-ar-arrow { display: none; }
+    }
+
+    @media (max-width: 380px) {
+      .cards-grid { grid-template-columns: 1fr; }
+      .thumb-item { width: 52px; height: 52px; }
+    }
+
+    @media (min-width: 768px) {
+      .hero { padding: 5rem 2rem 3.5rem; }
+      .menu-section { padding: 3rem 2rem 2rem; }
+      .cards-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ SPLASH ════════════════════════════════════════ -->
+<div id="splash">
+  <div class="tribal-border top"><div class="tribal-border-inner"></div></div>
+
+  <div class="splash-medallion">
+    <div class="medallion-ring"></div>
+    <div class="medallion-ring-2"></div>
+    <div class="medallion-core">
+      <img src="./assets/images/ui/logo.png" alt="icon" style="width: 250%; height: 250%; object-fit: contain;" />
+    </div>
+  </div>
+
+  <p class="splash-label">AR Try-on</p>
+  <h1 class="splash-title">
+    Topi Adat
+    <em>Dayak Kenyah</em>
+  </h1>
+  <p class="splash-desc">Warisan Budaya Kalimantan Timur</p>
+
+  <div class="progress-track">
+    <div class="progress-deco">
+      <div class="progress-diamond"></div>
+      <div class="progress-line">
+        <div class="progress-fill"></div>
+      </div>
+      <div class="progress-diamond"></div>
+    </div>
+    <p class="progress-text" id="splash-text">Memuat aplikasi…</p>
+  </div>
+
+  <div class="tribal-border bottom"><div class="tribal-border-inner"></div></div>
+</div>
+
+<!-- ══ MAIN ════════════════════════════════════════ -->
+<div id="main">
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="tribal-strip"></div>
+    <div class="header-inner">
+      <div class="header-brand">
+        <div class="brand-icon"><img src="./assets/images/ui/logo.png" alt="icon" style="width: 150%; height: 150%; object-fit: contain;" />
+        </div>
+        <div class="brand-text">
+          <div class="brand-name">Topi Adat</div>
+          <div class="brand-sub">Dayak Kenyah</div>
+        </div>
+      </div>
+      <a href="ar.html" class="header-cta">
+        ▶ Mulai AR
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-sunburst"></div>
+
+    <p class="hero-eyebrow fade-up">Warisan Budaya Kalimantan Timur</p>
+
+    <h1 class="hero-title fade-up">
+      Topi Adat
+      <span class="gold italic">Dayak Kenyah</span>
+    </h1>
+
+    <p class="hero-subtitle fade-up">
+      Jelajahi kekayaan budaya leluhur lewat teknologi<br>
+      Augmented Reality
+    </p>
+
+    <div class="ornament-line fade-up">
+      <div class="orn-line"></div>
+      <div class="orn-center">◆ ◆ ◆</div>
+      <div class="orn-line"></div>
+    </div>
+
+    <!-- Thumbnail topi -->
+    <div class="thumb-strip fade-up" id="hero-thumbs"></div>
+
+    <div class="fade-up">
+  <a href="ar.html" class="btn-ar">
+    <span class="btn-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+    </span>
+    Mulai AR Sekarang
+  </a>
+</div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider">
+    <div class="div-line"></div>
+    <div class="div-motif">
+      <div class="div-dot"></div>
+      <div class="div-dash"></div>
+      <div class="div-dot"></div>
+      <div class="div-dash"></div>
+      <div class="div-dot"></div>
+    </div>
+    <div class="div-line rev"></div>
+  </div>
+
+  <!-- Menu -->
+  <section class="menu-section">
+    <div class="section-label">
+      <span class="section-label-text">Jelajahi</span>
+      <div class="section-label-line"></div>
+    </div>
+
+    <!-- AR Card utama -->
+   <a href="ar.html" class="card-ar-main">
+  <div class="card-pattern"></div>
+  <div class="card-ar-emblem">
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+      <circle cx="12" cy="13" r="4"/>
+    </svg>
+  </div>
+  <div class="card-ar-body">
+    <div class="card-ar-label">Virtual Try-On</div>
+    <div class="card-ar-title">Mulai AR</div>
+    <div class="card-ar-desc">
+      Coba topi adat secara virtual langsung di wajah Anda menggunakan kamera
+    </div>
+  </div>
+  <div class="card-ar-arrow">→</div>
+</a>
+
+    <!-- Grid card -->
+   <div class="cards-grid">
+  <a href="informasi.html" class="menu-card">
+    <div class="card-icon">
+      <!-- Buku / Informasi -->
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+    </div>
+    <div class="card-name">Informasi Topi</div>
+    <div class="card-desc">Makna dan filosofi topi adat</div>
+    <div class="card-arrow">→</div>
+  </a>
+
+  <a href="panduan.html" class="menu-card">
+    <div class="card-icon">
+      <!-- List / Panduan -->
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="8" y1="6" x2="21" y2="6"/>
+        <line x1="8" y1="12" x2="21" y2="12"/>
+        <line x1="8" y1="18" x2="21" y2="18"/>
+        <line x1="3" y1="6" x2="3.01" y2="6"/>
+        <line x1="3" y1="12" x2="3.01" y2="12"/>
+        <line x1="3" y1="18" x2="3.01" y2="18"/>
+      </svg>
+    </div>
+    <div class="card-name">Panduan</div>
+    <div class="card-desc">Cara menggunakan aplikasi</div>
+    <div class="card-arrow">→</div>
+  </a>
+
+  <a href="tentang.html" class="menu-card">
+    <div class="card-icon">
+      <!-- Info / Tentang -->
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </div>
+    <div class="card-name">Tentang</div>
+    <div class="card-desc">Info pengembang aplikasi</div>
+    <div class="card-arrow">→</div>
+  </a>
+</div>
+
+    <!-- Quote strip -->
+    <div class="quote-strip">
+      <p class="quote-text">
+        "Topi bukan sekadar penutup kepala — ia adalah mahkota identitas, simbol derajat, dan penanda adat yang hidup."
+      </p>
+      <p class="quote-source">— Filosofi Dayak Kenyah</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-motif">
+      <div class="footer-diamond"></div>
+      <div class="footer-diamond"></div>
+      <div class="footer-diamond"></div>
+      <div class="footer-diamond"></div>
+      <div class="footer-diamond"></div>
+    </div>
+    <p class="footer-text">
+      © 2025 · <strong>Universitas Mulawarman</strong> · Fakultas Teknik Informatika
+    </p>
+  </footer>
+</div>
+
+<div id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+  /* ── Splash ─────────────────────────────── */
+  const msgs = ['Memuat aplikasi…', 'Menyiapkan model 3D…', 'Hampir selesai…'];
+  let mi = 0;
+  const splashText = document.getElementById('splash-text');
+  const msgTimer = setInterval(() => {
+    mi = (mi + 1) % msgs.length;
+    splashText.textContent = msgs[mi];
+  }, 850);
+
+  setTimeout(() => {
+    clearInterval(msgTimer);
+    splashText.textContent = 'Siap! ✓';
+    setTimeout(() => {
+      document.getElementById('splash').classList.add('fade-out');
+      setTimeout(() => {
+        document.getElementById('splash').style.display = 'none';
+        document.getElementById('main').classList.add('visible');
+        buildThumbs();
+      }, 800);
+    }, 400);
+  }, 2500);
+
+  /* ── Thumbnail Builder ───────────────────── */
+  function buildThumbs() {
+    const wrap = document.getElementById('hero-thumbs');
+    if (typeof TOPI_DATA === 'undefined') return;
+    TOPI_DATA.forEach(topi => {
+      const div = document.createElement('div');
+      div.className = 'thumb-item';
+      div.title = topi.nama;
+      div.onclick = () => window.location.href = `detail-topi.html?id=${topi.id}`;
+
+      const img = document.createElement('img');
+      img.src = topi.gambar;
+      img.alt = topi.nama;
+      img.onerror = () => {
+        img.remove();
+        const fb = document.createElement('div');
+        fb.className = 'thumb-fallback';
+        fb.textContent = '🎩';
+        div.appendChild(fb);
+      };
+
+      div.appendChild(img);
+      wrap.appendChild(div);
+    });
+  }
+
+  /* ── Toast ───────────────────────────────── */
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+</script>
+</body>
+</html>

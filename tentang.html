@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tentang Aplikasi — Topi Adat Dayak Kenyah</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .tentang-content {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem;
+    }
+
+    /* App emblem */
+    .app-emblem {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.75rem;
+      padding: 1.5rem 0 1rem;
+    }
+
+    .emblem-circle {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      border: 2px solid var(--border-bright);
+      background: radial-gradient(circle at 35% 35%, rgba(201,168,76,0.12), rgba(26,15,5,0.8));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.8rem;
+      box-shadow: 0 0 30px rgba(201,168,76,0.15);
+    }
+
+    .app-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--cream);
+      line-height: 1.2;
+    }
+
+    .app-name span { color: var(--gold); display: block; }
+
+    .app-version {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 0.2rem 0.75rem;
+    }
+
+    .app-tagline {
+      font-family: 'Crimson Text', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 280px;
+    }
+
+    /* Info sections */
+    .info-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 0.85rem;
+    }
+
+    .info-block-header {
+      padding: 0.75rem 1.1rem;
+      background: rgba(201,168,76,0.05);
+      border-bottom: 1px solid var(--border);
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-block-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.85rem 1.1rem;
+      border-bottom: 1px solid rgba(201,168,76,0.08);
+    }
+
+    .info-block-row:last-child { border-bottom: none; }
+
+    .info-block-icon {
+      font-size: 1rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .info-block-label {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-bottom: 0.1rem;
+    }
+
+    .info-block-value {
+      font-family: 'Crimson Text', serif;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      line-height: 1.4;
+    }
+
+    /* Tech stack pills */
+    .tech-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      padding: 0.85rem 1.1rem;
+    }
+
+    .tech-pill {
+      padding: 0.25rem 0.7rem;
+      border-radius: 50px;
+      background: rgba(201,168,76,0.08);
+      border: 1px solid var(--border);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.68rem;
+      color: var(--gold-light);
+    }
+
+    /* Quote section */
+    .quote-block {
+      background: rgba(201,168,76,0.04);
+      border: 1px solid rgba(201,168,76,0.15);
+      border-left: 3px solid var(--gold);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+    }
+
+    .quote-text {
+      font-family: 'Crimson Text', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 0.5rem;
+    }
+
+    .quote-source {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.7rem;
+      color: var(--gold-dark);
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <a href="index.html" class="back-btn">←</a>
+  <div>
+    <div class="page-header-title">Tentang Aplikasi</div>
+    <div class="page-header-sub">Informasi Pengembang</div>
+  </div>
+</div>
+
+<div class="page-content tentang-content">
+
+  <!-- App Emblem -->
+  <div class="app-emblem">
+    <div class="emblem-circle">🎩</div>
+    <h1 class="app-name">
+      Topi Adat
+      <span>Dayak Kenyah</span>
+    </h1>
+    <span class="app-version">Versi 1.0.0 · 2025</span>
+    <p class="app-tagline">Melestarikan budaya Dayak Kenyah melalui teknologi Augmented Reality</p>
+  </div>
+
+  <!-- Deskripsi -->
+  <div class="quote-block">
+    <div class="quote-text">
+      Aplikasi WebAR ini dikembangkan sebagai media visualisasi interaktif dan instrumen pelestarian digital topi adat Dayak Kenyah, memungkinkan generasi muda mengenal 8 jenis topi adat secara virtual melalui peramban web tanpa instalasi.
+    </div>
+    <div class="quote-source">— Deskripsi Aplikasi</div>
+  </div>
+
+  <!-- Informasi Pengembang -->
+  <div class="info-block">
+    <div class="info-block-header">👤 Informasi Pengembang</div>
+    <!-- 
+      ═══════════════════════════════════════════════════
+      GANTI DATA DI BAWAH INI DENGAN DATA ANDA SENDIRI
+      ═══════════════════════════════════════════════════
+    -->
+    <div class="info-block-row">
+      <span class="info-block-icon">🎓</span>
+      <div>
+        <div class="info-block-label">Nama Pengembang</div>
+        <div class="info-block-value">[Nama Anda]</div>
+      </div>
+    </div>
+    <div class="info-block-row">
+      <span class="info-block-icon">🏛️</span>
+      <div>
+        <div class="info-block-label">Institusi</div>
+        <div class="info-block-value">Universitas Mulawarman</div>
+      </div>
+    </div>
+    <div class="info-block-row">
+      <span class="info-block-icon">📚</span>
+      <div>
+        <div class="info-block-label">Program Studi</div>
+        <div class="info-block-value">Informatika, Fakultas Teknik</div>
+      </div>
+    </div>
+    <div class="info-block-row">
+      <span class="info-block-icon">🔢</span>
+      <div>
+        <div class="info-block-label">NIM</div>
+        <div class="info-block-value">[NIM Anda]</div>
+      </div>
+    </div>
+    <div class="info-block-row">
+      <span class="info-block-icon">📧</span>
+      <div>
+        <div class="info-block-label">Email</div>
+        <div class="info-block-value">[email@example.com]</div>
+      </div>
+    </div>
+    <div class="info-block-row">
+      <span class="info-block-icon">📅</span>
+      <div>
+        <div class="info-block-label">Tahun Pengembangan</div>
+        <div class="info-block-value">2025 – 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Narasumber -->
+  <div class="info-block">
+    <div class="info-block-header">🤝 Narasumber</div>
+    <div class="info-block-row">
+      <span class="info-block-icon">👨</span>
+      <div>
+        <div class="info-block-label">Narasumber 1</div>
+        <div class="info-block-value">Bapak Nuh Lenjau — Sekretaris Umum Dayak Kenyah Kalimantan Timur</div>
+      </div>
+    </div>
+    <div class="info-block-row">
+      <span class="info-block-icon">👨</span>
+      <div>
+        <div class="info-block-label">Narasumber 2</div>
+        <div class="info-block-value">Bapak Enggong Anyeq — Penasehat Adat Dayak Lepoq Jalan Desa Long Segar</div>
+      </div>
+    </div>
+    <div class="info-block-row">
+      <span class="info-block-icon">👩</span>
+      <div>
+        <div class="info-block-label">Narasumber 3</div>
+        <div class="info-block-value">Ibu Darmi Sartika — Pengurus Adat Dayak Kerukunan Dayak Kenyah Temengang Dian</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Teknologi -->
+  <div class="info-block">
+    <div class="info-block-header">⚙️ Teknologi yang Digunakan</div>
+    <div class="tech-pills">
+      <span class="tech-pill">MindAR.js</span>
+      <span class="tech-pill">A-Frame</span>
+      <span class="tech-pill">Three.js</span>
+      <span class="tech-pill">MediaPipe Face Mesh</span>
+      <span class="tech-pill">Blender 3D</span>
+      <span class="tech-pill">GLTF / GLB</span>
+      <span class="tech-pill">HTML5</span>
+      <span class="tech-pill">CSS3</span>
+      <span class="tech-pill">JavaScript</span>
+      <span class="tech-pill">WebAR</span>
+      <span class="tech-pill">WebGL</span>
+      <span class="tech-pill">Figma</span>
+    </div>
+  </div>
+
+  <!-- Metode -->
+  <div class="info-block">
+    <div class="info-block-header">📋 Metode Pengembangan</div>
+    <div class="info-block-row">
+      <span class="info-block-icon">🔄</span>
+      <div>
+        <div class="info-block-label">Metode</div>
+        <div class="info-block-value">Multimedia Development Life Cycle (MDLC)</div>
+      </div>
+    </div>
+    <div class="info-block-row">
+      <span class="info-block-icon">📍</span>
+      <div>
+        <div class="info-block-label">Lokasi Penelitian</div>
+        <div class="info-block-value">Desa Juk Ayaq, Kec. Telen, Kab. Kutai Timur & Lab. Multimedia Unmul</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+<script src="js/app.js"></script>
+</body>
+</html>

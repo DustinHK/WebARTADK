@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panduan Penggunaan — Topi Adat Dayak Kenyah</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .panduan-content {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem;
+    }
+
+    .panduan-hero {
+      text-align: center;
+      padding-bottom: 1.5rem;
+    }
+
+    .panduan-hero h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      color: var(--cream);
+      margin-bottom: 0.3rem;
+    }
+
+    .panduan-hero p {
+      font-family: 'Crimson Text', serif;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Step Cards */
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin: 1.25rem 0;
+    }
+
+    .step-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--gold), transparent);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .step-card:hover { border-color: var(--gold-dark); }
+    .step-card:hover::before { opacity: 1; }
+
+    .step-num {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: var(--brown-deep);
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 10px rgba(201,168,76,0.3);
+    }
+
+    .step-body {}
+
+    .step-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 0.25rem;
+    }
+
+    .step-desc {
+      font-family: 'Crimson Text', serif;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .step-icon {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.6rem;
+      opacity: 0.12;
+    }
+
+    /* Tips section */
+    .tips-section {
+      background: rgba(201,168,76,0.06);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .tips-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.75rem;
+    }
+
+    .tip-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(201,168,76,0.1);
+    }
+
+    .tip-item:last-child { border-bottom: none; }
+
+    .tip-icon { font-size: 0.9rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+    .tip-text {
+      font-family: 'Crimson Text', serif;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Requirements */
+    .req-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+
+    .req-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem;
+      text-align: center;
+    }
+
+    .req-icon { font-size: 1.5rem; margin-bottom: 0.3rem; }
+
+    .req-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      color: var(--gold);
+      display: block;
+    }
+
+    .req-desc {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <a href="index.html" class="back-btn">←</a>
+  <div>
+    <div class="page-header-title">Panduan Penggunaan</div>
+    <div class="page-header-sub">Cara Menggunakan Aplikasi AR</div>
+  </div>
+</div>
+
+<div class="page-content panduan-content">
+
+  <div class="panduan-hero">
+    <h2>Cara Menggunakan</h2>
+    <p>Ikuti langkah-langkah berikut untuk memulai</p>
+  </div>
+
+  <!-- Steps -->
+  <div class="step-list">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Buka Halaman Utama</div>
+        <div class="step-desc">Buka aplikasi melalui peramban web (Chrome/Firefox). Tunggu hingga loading selesai dan halaman utama muncul.</div>
+      </div>
+      <span class="step-icon">🌐</span>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Tekan "Mulai AR"</div>
+        <div class="step-desc">Ketuk tombol <strong>Mulai AR</strong> di halaman utama. Peramban akan meminta izin akses kamera — pilih <em>Izinkan</em>.</div>
+      </div>
+      <span class="step-icon">▶️</span>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Arahkan Kamera ke Wajah</div>
+        <div class="step-desc">Arahkan kamera depan ke wajah Anda. Pastikan wajah terlihat jelas, pencahayaan cukup, dan berada di depan kamera.</div>
+      </div>
+      <span class="step-icon">📷</span>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Topi Muncul di Kepala</div>
+        <div class="step-desc">Setelah wajah terdeteksi, model 3D topi adat akan otomatis muncul di atas kepala Anda secara <em>real-time</em>.</div>
+      </div>
+      <span class="step-icon">🎩</span>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">Ganti Topi</div>
+        <div class="step-desc">Geser dan ketuk tombol topi di bagian bawah layar untuk berganti di antara 8 jenis topi adat Dayak Kenyah.</div>
+      </div>
+      <span class="step-icon">🔄</span>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <div class="step-title">Lihat Informasi Topi</div>
+        <div class="step-desc">Ketuk tombol <strong>ℹ️ Info</strong> untuk melihat nama, pengguna, dan kegunaan topi. Atau tekan <em>Info Lengkap</em> untuk halaman detail lengkap.</div>
+      </div>
+      <span class="step-icon">📖</span>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <div class="step-title">Atur Posisi Topi</div>
+        <div class="step-desc">Ketuk <strong>⚙ Atur</strong> untuk membuka slider penyesuaian posisi naik/turun, maju/mundur, dan ukuran topi agar pas di kepala.</div>
+      </div>
+      <span class="step-icon">⚙️</span>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">8</div>
+      <div class="step-body">
+        <div class="step-title">Ambil Foto</div>
+        <div class="step-desc">Ketuk tombol <strong>📸 Foto</strong> untuk mengambil screenshot hasil try-on yang akan tersimpan otomatis di perangkat Anda.</div>
+      </div>
+      <span class="step-icon">📸</span>
+    </div>
+  </div>
+
+  <!-- Tips -->
+  <div class="tips-section">
+    <div class="tips-title">💡 Tips Agar AR Optimal</div>
+    <div class="tip-item">
+      <span class="tip-icon">☀️</span>
+      <span class="tip-text">Gunakan di ruangan dengan pencahayaan yang cukup terang dan merata.</span>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">📐</span>
+      <span class="tip-text">Posisikan wajah di tengah layar, sekitar 30–60 cm dari kamera.</span>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">🙂</span>
+      <span class="tip-text">Hadap ke depan saat pertama membuka AR agar deteksi wajah cepat terkunci.</span>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">🌐</span>
+      <span class="tip-text">Gunakan browser Chrome atau Firefox versi terbaru untuk hasil terbaik.</span>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">📶</span>
+      <span class="tip-text">Pastikan koneksi internet stabil saat pertama kali memuat AR engine.</span>
+    </div>
+  </div>
+
+  <!-- Requirements -->
+  <div style="margin-top: 1.5rem;">
+    <div class="section-title" style="font-family:'Cinzel',serif;font-size:0.8rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.6rem;">
+      Persyaratan Perangkat
+    </div>
+    <div class="req-grid">
+      <div class="req-card">
+        <div class="req-icon">📱</div>
+        <span class="req-label">Smartphone</span>
+        <div class="req-desc">iOS Safari / Android Chrome</div>
+      </div>
+      <div class="req-card">
+        <div class="req-icon">💻</div>
+        <span class="req-label">Desktop</span>
+        <div class="req-desc">Chrome / Firefox + Webcam</div>
+      </div>
+      <div class="req-card">
+        <div class="req-icon">📷</div>
+        <span class="req-label">Kamera</span>
+        <div class="req-desc">Kamera depan aktif</div>
+      </div>
+      <div class="req-card">
+        <div class="req-icon">📲</div>
+        <span class="req-label">Instalasi</span>
+        <div class="req-desc">Tidak perlu install app</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+/* ════════════════════════════════════════════════════════════
+   TOPI ADAT DAYAK KENYAH — Global Stylesheet
+   Tema: Coklat & Emas (nuansa adat tradisional)
+   Font: Cinzel (display) + Crimson Text (body)
+   ════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700&display=swap');
+
+/* ── CSS Variables ── */
+:root {
+  --gold:        #C9A84C;
+  --gold-light:  #E8C96A;
+  --gold-dark:   #9A7A30;
+  --gold-glow:   rgba(201, 168, 76, 0.3);
+  --brown-deep:  #1A0F05;
+  --brown-dark:  #231810;
+  --brown-mid:   #3D2B1A;
+  --brown-light: #6B4A2E;
+  --cream:       #F5ECD7;
+  --cream-dim:   #C9B899;
+  --text-main:   #F0E6D0;
+  --text-muted:  #9E8A6E;
+  --text-dim:    #6B5A44;
+  --border:      rgba(201, 168, 76, 0.25);
+  --border-bright: rgba(201, 168, 76, 0.6);
+  --surface:     rgba(61, 43, 26, 0.7);
+  --surface-dark: rgba(26, 15, 5, 0.85);
+  --radius:      16px;
+  --radius-sm:   10px;
+  --radius-lg:   24px;
+  --shadow:      0 8px 32px rgba(0,0,0,0.5);
+  --shadow-gold: 0 0 24px rgba(201, 168, 76, 0.2);
+  --transition:  0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--brown-deep);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ── Background Texture Overlay ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(201,168,76,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(139,94,60,0.08) 0%, transparent 50%),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(201,168,76,0.015) 40px,
+      rgba(201,168,76,0.015) 41px
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+body > * { position: relative; z-index: 1; }
+
+/* ── Typography ── */
+h1, h2, h3, .font-display {
+  font-family: 'Cinzel', serif;
+  line-height: 1.2;
+}
+
+p, .font-body {
+  font-family: 'Crimson Text', serif;
+  font-size: 1.05rem;
+}
+
+/* ── Page Header (non-splash pages) ── */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--surface-dark);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--gold);
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: var(--transition);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.back-btn:hover {
+  background: var(--gold-glow);
+  border-color: var(--gold);
+  transform: scale(1.08);
+}
+
+.page-header-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.5px;
+}
+
+.page-header-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ── Ornament Divider ── */
+.ornament {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+
+.ornament-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+}
+
+.ornament-diamond {
+  width: 8px; height: 8px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+/* ── Buttons ── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2rem;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: var(--brown-deep);
+  border: none;
+  border-radius: 50px;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(201,168,76,0.3);
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(201,168,76,0.5);
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.8rem;
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--border-bright);
+  border-radius: 50px;
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  background: var(--gold-glow);
+  transform: translateY(-2px);
+}
+
+/* ── Ripple Effect ── */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  width: 10px; height: 10px;
+  transform: translate(-50%, -50%) scale(0);
+  animation: ripple-anim 0.6s linear;
+  pointer-events: none;
+}
+
+@keyframes ripple-anim {
+  to { transform: translate(-50%, -50%) scale(25); opacity: 0; }
+}
+
+/* ── Card Component ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: var(--transition);
+  position: relative;
+}
+
+.card:hover {
+  border-color: var(--gold-dark);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-gold);
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-family: 'Nunito', sans-serif;
+}
+
+.badge-tapung {
+  background: rgba(184,134,11,0.2);
+  color: #F0C040;
+  border: 1px solid rgba(184,134,11,0.4);
+}
+
+.badge-bluko {
+  background: rgba(44,74,140,0.25);
+  color: #7EB5FF;
+  border: 1px solid rgba(44,74,140,0.5);
+}
+
+/* ── Toast ── */
+#toast {
+  position: fixed;
+  bottom: 5rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: var(--brown-deep);
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 0.6rem 1.6rem;
+  border-radius: 50px;
+  z-index: 9999;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(201,168,76,0.4);
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── Loading Spinner ── */
+.spinner {
+  width: 44px; height: 44px;
+  border: 3px solid rgba(201,168,76,0.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Topi Grid Image ── */
+.topi-img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  display: block;
+  background: var(--brown-mid);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--brown-dark); }
+::-webkit-scrollbar-thumb { background: var(--brown-light); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold-dark); }
+
+/* ── Responsive Utility ── */
+.container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* ── Section spacing ── */
+.section { padding: 2rem 0; }
+
+/* ── Info Row (label + value) ── */
+.info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.info-row:last-child { border-bottom: none; }
+
+.info-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  color: var(--gold);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.info-value {
+  font-family: 'Crimson Text', serif;
+  font-size: 1rem;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+/* ── Page fade-in animation ── */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-content {
+  animation: pageIn 0.4s ease forwards;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .page-header-title { font-size: 0.95rem; }
+  .btn-primary, .btn-secondary { font-size: 0.82rem; padding: 0.75rem 1.5rem; }
+}

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Informasi Topi Adat — Dayak Kenyah</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Filter Bar ── */
+    .filter-bar {
+      display: flex;
+      gap: 0.5rem;
+      padding: 1rem 1.25rem 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
+
+    .filter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .filter-pill.active,
+    .filter-pill:hover {
+      background: var(--gold-glow);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* ── Info Header ── */
+    .info-hero {
+      padding: 1.5rem 1.25rem 1rem;
+      text-align: center;
+    }
+
+    .info-hero h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.35rem;
+      color: var(--cream);
+      margin-bottom: 0.35rem;
+    }
+
+    .info-hero p {
+      font-family: 'Crimson Text', serif;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ── Grid ── */
+    .topi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.85rem;
+      padding: 1rem 1.25rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 600px) {
+      .topi-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (min-width: 820px) {
+      .topi-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    /* ── Topi Card ── */
+    .topi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      position: relative;
+    }
+
+    .topi-card:hover {
+      border-color: var(--gold-dark);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(201,168,76,0.15);
+    }
+
+    .topi-card-img-wrap {
+      position: relative;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      background: var(--brown-mid);
+    }
+
+    .topi-card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .topi-card:hover .topi-card-img {
+      transform: scale(1.06);
+    }
+
+    /* Upload hint overlay (shown when image missing/error) */
+    .img-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--brown-mid);
+      gap: 0.3rem;
+    }
+
+    .img-placeholder-icon {
+      font-size: 2rem;
+      opacity: 0.4;
+    }
+
+    .img-placeholder-text {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    .topi-card-badge {
+      position: absolute;
+      top: 0.5rem;
+      left: 0.5rem;
+    }
+
+    /* Gold accent bar at bottom of image */
+    .topi-card-img-wrap::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 40px;
+      background: linear-gradient(0deg, rgba(26,15,5,0.7), transparent);
+      pointer-events: none;
+    }
+
+    .topi-card-body {
+      padding: 0.75rem;
+    }
+
+    .topi-card-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 0.2rem;
+      line-height: 1.2;
+    }
+
+    .topi-card-user {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .topi-card-arrow {
+      position: absolute;
+      bottom: 0.7rem;
+      right: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--gold-dark);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .topi-card:hover .topi-card-arrow { opacity: 1; }
+
+    /* Count badge */
+    .count-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      padding: 0 1.25rem 0.5rem;
+    }
+
+    /* Empty filter state */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-dim);
+      font-family: 'Crimson Text', serif;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="page-header">
+  <a href="index.html" class="back-btn">←</a>
+  <div>
+    <div class="page-header-title">Informasi Topi Adat</div>
+    <div class="page-header-sub">Dayak Kenyah</div>
+  </div>
+</div>
+
+<div class="page-content">
+
+  <!-- Hero -->
+  <div class="info-hero">
+    <h2>8 Jenis Topi Adat</h2>
+    <p>Pilih topi untuk melihat makna dan filosofinya</p>
+  </div>
+
+  <!-- Filter -->
+  <div class="filter-bar">
+    <button class="filter-pill active" data-filter="semua" onclick="filterTopi('semua', this)">✦ Semua</button>
+    <button class="filter-pill" data-filter="Tapung" onclick="filterTopi('Tapung', this)">Tapung (6)</button>
+    <button class="filter-pill" data-filter="Bluko"  onclick="filterTopi('Bluko', this)">Bluko (2)</button>
+    <button class="filter-pill" data-filter="Perempuan" onclick="filterTopi('Perempuan', this)">👩 Perempuan</button>
+    <button class="filter-pill" data-filter="Laki-laki" onclick="filterTopi('Laki-laki', this)">👨 Laki-laki</button>
+  </div>
+
+  <div class="count-badge" id="count-badge">Menampilkan 8 topi</div>
+
+  <!-- Grid -->
+  <div class="topi-grid" id="topi-grid">
+    <!-- Diisi via JS -->
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+  let activeFilter = 'semua';
+
+  function buildGrid(filter) {
+    const grid = document.getElementById('topi-grid');
+    grid.innerHTML = '';
+
+    const filtered = filter === 'semua'
+      ? TOPI_DATA
+      : TOPI_DATA.filter(t => {
+          if (filter === 'Tapung' || filter === 'Bluko') return t.kategori === filter;
+          if (filter === 'Perempuan') return t.pengguna.toLowerCase().includes('perempuan') || t.pengguna.toLowerCase().includes('wanita');
+          if (filter === 'Laki-laki') return t.pengguna.toLowerCase().includes('laki');
+          return true;
+        });
+
+    document.getElementById('count-badge').textContent =
+      `Menampilkan ${filtered.length} topi`;
+
+    if (!filtered.length) {
+      grid.innerHTML = '<div class="empty-state">Tidak ada topi yang cocok dengan filter ini.</div>';
+      return;
+    }
+
+    filtered.forEach(topi => {
+      const a = document.createElement('a');
+      a.className = 'topi-card';
+      a.href = `detail-topi.html?id=${topi.id}`;
+
+      const badgeClass = topi.kategori === 'Tapung' ? 'badge-tapung' : 'badge-bluko';
+
+      a.innerHTML = `
+        <div class="topi-card-img-wrap">
+          <img class="topi-card-img" src="${topi.gambar}" alt="${topi.nama}"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div class="img-placeholder" style="display:none">
+            <span class="img-placeholder-icon">🎩</span>
+            <span class="img-placeholder-text">Tambahkan gambar</span>
+          </div>
+          <span class="topi-card-badge badge ${badgeClass}">${topi.kategori}</span>
+        </div>
+        <div class="topi-card-body">
+          <div class="topi-card-name">${topi.nama}</div>
+          <div class="topi-card-user">👤 ${topi.pengguna.split('(')[0].trim()}</div>
+        </div>
+        <span class="topi-card-arrow">→</span>
+      `;
+
+      grid.appendChild(a);
+    });
+  }
+
+  function filterTopi(filter, btn) {
+    activeFilter = filter;
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    buildGrid(filter);
+  }
+
+  // Init
+  buildGrid('semua');
+</script>
+</body>
+</html>
