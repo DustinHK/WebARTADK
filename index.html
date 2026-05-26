@@ -1138,27 +1138,90 @@
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
 <script>
-  /* ── Splash ─────────────────────────────── */
-  const msgs = ['Memuat aplikasi…', 'Menyiapkan model 3D…', 'Hampir selesai…'];
-  let mi = 0;
-  const splashText = document.getElementById('splash-text');
-  const msgTimer = setInterval(() => {
-    mi = (mi + 1) % msgs.length;
-    splashText.textContent = msgs[mi];
-  }, 850);
+  /* ── REAL ASSET PRELOADER ─────────────────────────── */
+  async function preloadAssets() {
+    const splashText = document.getElementById('splash-text');
+    const progressFill = document.querySelector('.progress-fill');
+    
+    if (typeof TOPI_DATA === 'undefined') {
+      console.error('TOPI_DATA not found!');
+      finishSplash();
+      return;
+    }
 
-  setTimeout(() => {
-    clearInterval(msgTimer);
-    splashText.textContent = 'Siap! ✓';
+    // 1. Kumpulkan daftar aset
+    const images = ['./assets/images/ui/logo.png'];
+    const models = ['./assets/models/headOccluder.glb'];
+    
+    TOPI_DATA.forEach(topi => {
+      if (topi.gambar) images.push(topi.gambar);
+      if (topi.gambarDetail) images.push(topi.gambarDetail);
+      if (topi.hatFile) models.push(`./assets/models/${topi.hatFile}`);
+    });
+
+    const totalAssets = images.length + models.length;
+    let loadedCount = 0;
+
+    const updateProgress = (name) => {
+      loadedCount++;
+      const percent = (loadedCount / totalAssets) * 100;
+      progressFill.style.width = percent + '%';
+      splashText.textContent = `Memuat: ${name}… (${loadedCount}/${totalAssets})`;
+    };
+
+    // 2. Fungsi Loaders
+    const loadImage = (url) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          updateProgress(url.split('/').pop());
+          resolve();
+        };
+        img.onerror = () => {
+          console.warn('Gagal memuat gambar:', url);
+          updateProgress(url.split('/').pop()); // tetap lanjut walau error
+          resolve();
+        };
+        img.src = url;
+      });
+    };
+
+    const loadModel = async (url) => {
+      try {
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error();
+        updateProgress(url.split('/').pop());
+      } catch (e) {
+        console.warn('Gagal memuat model:', url);
+        updateProgress(url.split('/').pop());
+      }
+    };
+
+    // 3. Eksekusi Preload
+    // Kita jalankan secara paralel (Promise.all) tapi dengan batching jika perlu.
+    // Untuk 20-30 aset, langsung parallel masih aman.
+    const promises = [
+      ...images.map(url => loadImage(url)),
+      ...models.map(url => loadModel(url))
+    ];
+
+    await Promise.all(promises);
+
+    splashText.textContent = 'Semua aset siap! ✓';
+    setTimeout(finishSplash, 600);
+  }
+
+  function finishSplash() {
+    document.getElementById('splash').classList.add('fade-out');
     setTimeout(() => {
-      document.getElementById('splash').classList.add('fade-out');
-      setTimeout(() => {
-        document.getElementById('splash').style.display = 'none';
-        document.getElementById('main').classList.add('visible');
-        buildThumbs();
-      }, 800);
-    }, 400);
-  }, 2500);
+      document.getElementById('splash').style.display = 'none';
+      document.getElementById('main').classList.add('visible');
+      buildThumbs();
+    }, 800);
+  }
+
+  // Mulai loading saat DOM siap
+  document.addEventListener('DOMContentLoaded', preloadAssets);
 
   /* ── Thumbnail Builder ───────────────────── */
   function buildThumbs() {
