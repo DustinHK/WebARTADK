@@ -91,6 +91,8 @@
   },
   remove() {},
   tick() {
+    this.el.sceneEl.object3D.updateMatrixWorld(true);
+
     const lm10  = document.getElementById('lm-10');
     const lm152 = document.getElementById('lm-152');
     const lm234 = document.getElementById('lm-234');
@@ -618,7 +620,7 @@
   <a-scene id="ar-scene"
     mindar-face="autoStart: true; uiLoading: false; uiError: false;"
     embedded color-space="sRGB"
-    renderer="colorManagement: true, physicallyCorrectLights, preserveDrawingBuffer: true"
+    renderer="colorManagement: true; physicallyCorrectLights: true; preserveDrawingBuffer: true; antialias: false"
     vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false">
 
