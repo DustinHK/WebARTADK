@@ -167,7 +167,7 @@
       return; 
     }
 
-    // Wajah terdeteksi
+    // Wajah terdeteksiz
     this.el.object3D.visible = true;
     if (this._faceVisible !== true) {
       this._faceVisible = true;
@@ -649,7 +649,10 @@ obj.quaternion.copy(quat);
     device-orientation-permission-ui="enabled: false">
 
     <a-assets timeout="15000"></a-assets>
-    <a-camera active="false" position="0 0 0"></a-camera>
+    <a-camera active="false" position="0 0 0" 
+  look-controls="enabled: false" 
+  wasd-controls="enabled: false">
+</a-camera>
 
     <!-- Occluder anchor -->
     <a-entity mindar-face-target="anchorIndex: 168" id="occluder-anchor"></a-entity>
