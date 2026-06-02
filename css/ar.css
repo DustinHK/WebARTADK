@@ -393,7 +393,91 @@ a-scene {
     white-space: nowrap;
     font-family: 'Nunito', sans-serif;
 }
+/* ── FLASH FREEZE ── */
+#flash-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: #fff;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.08s ease-out;
+}
+#flash-overlay.flash {
+    opacity: 0.85;
+    transition: none;
+}
 
+/* ── PREVIEW MODAL ── */
+#preview-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    background: rgba(5, 3, 1, 0.88);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+}
+#preview-modal.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#preview-modal img {
+    max-width: min(100%, 480px);
+    max-height: 65dvh;
+    border-radius: 16px;
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 40px rgba(201, 168, 76, 0.25);
+    display: block;
+}
+
+.preview-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    color: var(--gold);
+    letter-spacing: 1px;
+}
+
+.preview-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.preview-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.65rem 1.4rem;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    transition: transform 0.15s;
+}
+.preview-btn:hover { transform: scale(1.05); }
+
+.preview-btn.save {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: #1A0F05;
+    box-shadow: 0 4px 16px rgba(201, 168, 76, 0.3);
+}
+
+.preview-btn.close {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--text-main);
+}
 #toast.show {
     opacity: 1;
     transform: translateX(-50%) translateY(0);

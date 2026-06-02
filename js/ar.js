@@ -3,6 +3,8 @@ const hatEntities = {};
 const TOTAL_HATS = 8;
 let infoPanelVisible = false;
 let uiVisible = true;
+let _pendingPhotoUrl = null;
+
 /* ── Build hat selector buttons ── */
 function buildHatSelector() {
     const sel = document.getElementById('hat-selector');
@@ -210,7 +212,13 @@ function toggleUI() {
 }
 
 /* ── Screenshot ── */
+
 function takeScreenshot() {
+    // Flash animation
+    const flash = document.getElementById('flash-overlay');
+    flash.classList.add('flash');
+    setTimeout(() => flash.classList.remove('flash'), 150);
+
     showToast('Mengambil foto…');
 
     setTimeout(() => {
@@ -225,30 +233,40 @@ function takeScreenshot() {
             combined.height = h;
             const ctx = combined.getContext('2d');
 
-            // Gambar video dulu sebagai background
             const video = document.querySelector('video');
             if (video && video.readyState >= 2) {
                 ctx.save();
                 ctx.translate(w, 0);
-                ctx.scale(-1, 1); // flip horizontal (kamera depan)
+                ctx.scale(-1, 1);
                 ctx.drawImage(video, 0, 0, w, h);
                 ctx.restore();
             }
 
-            // Overlay AR canvas di atasnya
             ctx.drawImage(arCanvas, 0, 0, w, h);
 
-            const url = combined.toDataURL('image/png');
-            const link = document.createElement('a');
-            link.download = `topi-dayak-${Date.now()}.png`;
-            link.href = url;
-            link.click();
-            showToast('📸 Foto tersimpan!');
+            _pendingPhotoUrl = combined.toDataURL('image/png');
+            document.getElementById('preview-img').src = _pendingPhotoUrl;
+            document.getElementById('preview-modal').classList.add('visible');
         } catch (e) {
             showToast('Gagal: ' + e.message);
             console.error(e);
         }
     }, 300);
+}
+
+function savePhoto() {
+    if (!_pendingPhotoUrl) return;
+    const link = document.createElement('a');
+    link.download = `topi-dayak-${Date.now()}.png`;
+    link.href = _pendingPhotoUrl;
+    link.click();
+    closePreview();
+    showToast('📸 Foto tersimpan!');
+}
+
+function closePreview() {
+    document.getElementById('preview-modal').classList.remove('visible');
+    _pendingPhotoUrl = null;
 }
 
 /* ── Toast ── */
