@@ -20,11 +20,12 @@
   <script>
     const origGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
     navigator.mediaDevices.getUserMedia = function (constraints) {
+      const isLowEnd = navigator.hardwareConcurrency <= 4;
       if (constraints && constraints.video) {
         constraints.video = {
           ...(typeof constraints.video === 'object' ? constraints.video : {}),
-          width:  { ideal: 1280 },
-          height: { ideal: 720 },
+          width:  { ideal: isLowEnd ? 640 : 1280 },
+          height: { ideal: isLowEnd ? 480 : 720 },
           facingMode: 'user'
         };
       }
@@ -42,6 +43,8 @@
       },
       remove() { },
       tick() {
+        this._tickCount = (this._tickCount || 0) + 1;
+        if (this._tickCount % 2 !== 0) return;
         const lm10 = document.getElementById('lm-10');
         const lm152 = document.getElementById('lm-152');
         const lm234 = document.getElementById('lm-234');
@@ -144,7 +147,7 @@
   <!-- ══ AR SCENE ══ -->
   <div id="ar-container">
     <a-scene id="ar-scene"
-      mindar-face="autoStart: true; uiLoading: false; uiError: false; filterMinCF: 0.001; filterBeta: 0.01" embedded
+      mindar-face="autoStart: true; uiLoading: false; uiError: false; filterMinCF: 0.01; filterBeta: 1" embedded
       color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights, preserveDrawingBuffer: false"
       vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
 

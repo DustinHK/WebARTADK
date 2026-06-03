@@ -57,11 +57,16 @@ function startAR() {
         }
 
         // Activate models
+        const isLowEnd = navigator.hardwareConcurrency <= 4 || (navigator.deviceMemory ?? 4) <= 3;
         for (let n = 1; n <= TOTAL_HATS; n++) {
             const modelEl = document.getElementById(`hat${n}-model`);
             const placeholder = document.getElementById(`hat${n}-placeholder`);
             if (!modelEl) continue;
-
+            if (isLowEnd) {
+                modelEl.setAttribute('visible', false);
+                if (placeholder) placeholder.setAttribute('visible', true);
+                continue; // skip load GLTF
+            }
             const activate = () => {
                 modelEl.setAttribute('visible', true);
                 if (placeholder) placeholder.setAttribute('visible', false);
