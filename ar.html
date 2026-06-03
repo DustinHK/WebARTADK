@@ -33,7 +33,8 @@
     };
   </script>
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-face-aframe.prod.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-face-aframe.prod.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-face-aframe.prod.js"></script>
   <script>
     AFRAME.registerComponent('head-center', {
       init() {
@@ -58,7 +59,7 @@
           this._lastTime = now;
         }
         this._tickCount = (this._tickCount || 0) + 1;
-        if (this._tickCount % 2 !== 0) return;
+        if (this._tickCount % 3 !== 0) return;
         const lm10 = document.getElementById('lm-10');
         const lm152 = document.getElementById('lm-152');
         const lm234 = document.getElementById('lm-234');
