@@ -20,12 +20,11 @@
   <script>
     const origGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
     navigator.mediaDevices.getUserMedia = function (constraints) {
-      const isLowEnd = navigator.hardwareConcurrency <= 4;
       if (constraints && constraints.video) {
         constraints.video = {
           ...(typeof constraints.video === 'object' ? constraints.video : {}),
-          width: { ideal: isLowEnd ? 640 : 1280 },
-          height: { ideal: isLowEnd ? 480 : 720 },
+          width:  { ideal: 1280 },
+          height: { ideal: 720 },
           facingMode: 'user'
         };
       }
@@ -33,8 +32,7 @@
     };
   </script>
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-  <!-- <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-face-aframe.prod.js"></script> -->
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-face-aframe.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-face-aframe.prod.js"></script>
   <script>
     AFRAME.registerComponent('head-center', {
       init() {
@@ -44,22 +42,6 @@
       },
       remove() { },
       tick() {
-        if (!this._fpsEl) {
-          this._fpsEl = document.createElement('div');
-          this._fpsEl.style.cssText = 'position:fixed;top:60px;left:10px;color:lime;font-size:12px;z-index:999;';
-          document.body.appendChild(this._fpsEl);
-          this._lastTime = performance.now();
-          this._frameCount = 0;
-        }
-        this._frameCount++;
-        const now = performance.now();
-        if (now - this._lastTime >= 1000) {
-          this._fpsEl.textContent = `FPS: ${this._frameCount}`;
-          this._frameCount = 0;
-          this._lastTime = now;
-        }
-        this._tickCount = (this._tickCount || 0) + 1;
-        if (this._tickCount % 3 !== 0) return;
         const lm10 = document.getElementById('lm-10');
         const lm152 = document.getElementById('lm-152');
         const lm234 = document.getElementById('lm-234');
@@ -162,7 +144,7 @@
   <!-- ══ AR SCENE ══ -->
   <div id="ar-container">
     <a-scene id="ar-scene"
-      mindar-face="autoStart: true; uiLoading: false; uiError: false; filterMinCF: 0.01; filterBeta: 1" embedded
+      mindar-face="autoStart: true; uiLoading: false; uiError: false; filterMinCF: 0.001; filterBeta: 0.01" embedded
       color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights, preserveDrawingBuffer: false"
       vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
 
