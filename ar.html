@@ -24,7 +24,7 @@
       if (constraints && constraints.video) {
         constraints.video = {
           ...(typeof constraints.video === 'object' ? constraints.video : {}),
-          width:  { ideal: isLowEnd ? 640 : 1280 },
+          width: { ideal: isLowEnd ? 640 : 1280 },
           height: { ideal: isLowEnd ? 480 : 720 },
           facingMode: 'user'
         };
@@ -43,6 +43,20 @@
       },
       remove() { },
       tick() {
+        if (!this._fpsEl) {
+          this._fpsEl = document.createElement('div');
+          this._fpsEl.style.cssText = 'position:fixed;top:60px;left:10px;color:lime;font-size:12px;z-index:999;';
+          document.body.appendChild(this._fpsEl);
+          this._lastTime = performance.now();
+          this._frameCount = 0;
+        }
+        this._frameCount++;
+        const now = performance.now();
+        if (now - this._lastTime >= 1000) {
+          this._fpsEl.textContent = `FPS: ${this._frameCount}`;
+          this._frameCount = 0;
+          this._lastTime = now;
+        }
         this._tickCount = (this._tickCount || 0) + 1;
         if (this._tickCount % 2 !== 0) return;
         const lm10 = document.getElementById('lm-10');
