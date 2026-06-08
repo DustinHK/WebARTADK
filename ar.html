@@ -7,17 +7,6 @@
   <title>AR Try-On — Topi Adat Dayak Kenyah</title>
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> -->
   <script>
-    // Patch WebGL agar preserveDrawingBuffer selalu true
-    const origGetContext = HTMLCanvasElement.prototype.getContext;
-    HTMLCanvasElement.prototype.getContext = function (type, attrs) {
-      if (type === 'webgl' || type === 'webgl2') {
-        attrs = attrs || {};
-        attrs.preserveDrawingBuffer = true;
-      }
-      return origGetContext.call(this, type, attrs);
-    };
-  </script>
-  <script>
     const origGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
     navigator.mediaDevices.getUserMedia = function (constraints) {
       if (constraints && constraints.video) {
@@ -37,8 +26,22 @@
     AFRAME.registerComponent('head-center', {
       init() {
         this._freezeCount = 0;
-        this._prevPos = null;
+        this._prevPos = new THREE.Vector3();
+        this._hasPrevPos = false;
         this._faceVisible = false;
+
+        // Reusable objects
+        this._vTop = new THREE.Vector3();
+        this._vBottom = new THREE.Vector3();
+        this._vLeft = new THREE.Vector3();
+        this._vRight = new THREE.Vector3();
+        this._yAxis = new THREE.Vector3();
+        this._xAxis = new THREE.Vector3();
+        this._zAxis = new THREE.Vector3();
+        this._rotMat = new THREE.Matrix4();
+        this._quat = new THREE.Quaternion();
+        this._parentWorldInv = new THREE.Matrix4();
+        this._parentQ = new THREE.Quaternion();
       },
       remove() { },
       tick() {
@@ -48,16 +51,10 @@
         const lm454 = document.getElementById('lm-454');
         if (!lm10 || !lm152 || !lm234 || !lm454) return;
 
-        const getWP = (el) => {
-          const v = new THREE.Vector3();
-          el.object3D.getWorldPosition(v);
-          return v;
-        };
-
-        const top = getWP(lm10);
-        const bottom = getWP(lm152);
-        const left = getWP(lm234);
-        const right = getWP(lm454);
+        lm10.object3D.getWorldPosition(this._vTop);
+        lm152.object3D.getWorldPosition(this._vBottom);
+        lm234.object3D.getWorldPosition(this._vLeft);
+        lm454.object3D.getWorldPosition(this._vRight);
 
         const statusEl = document.getElementById('face-status');
 
@@ -65,64 +62,67 @@
         const showWarning = () => { if (statusEl) statusEl.classList.remove('face-status-hidden'); };
         const hideWarning = () => { if (statusEl) statusEl.classList.add('face-status-hidden'); };
 
-        if (top.lengthSq() < 0.0001) {
+        if (this._vTop.lengthSq() < 0.0001) {
           this.el.object3D.visible = false;
           if (this._faceVisible !== false) {
             this._faceVisible = false;
-            showWarning(); // ← tampilkan warning
+            showWarning();
           }
           return;
         }
 
-        if (!this._prevPos) this._prevPos = top.clone();
-        const delta = top.distanceTo(this._prevPos);
+        if (!this._hasPrevPos) {
+          this._prevPos.copy(this._vTop);
+          this._hasPrevPos = true;
+        }
+
+        const delta = this._vTop.distanceTo(this._prevPos);
         if (delta < 0.000001) { this._freezeCount++; }
-        else { this._freezeCount = 0; this._prevPos.copy(top); }
+        else { this._freezeCount = 0; this._prevPos.copy(this._vTop); }
+
         if (this._freezeCount > 60) {
           this.el.object3D.visible = false;
           if (this._faceVisible !== false) {
             this._faceVisible = false;
-            showWarning(); // ← tampilkan warning
+            showWarning();
           }
           return;
         }
 
-        const yAxis = new THREE.Vector3().subVectors(top, bottom).normalize();
-        const xAxis = new THREE.Vector3().subVectors(right, left).normalize();
-        const zAxis = new THREE.Vector3().crossVectors(xAxis, yAxis).normalize();
-        xAxis.crossVectors(yAxis, zAxis).normalize();
+        this._yAxis.subVectors(this._vTop, this._vBottom).normalize();
+        this._xAxis.subVectors(this._vRight, this._vLeft).normalize();
+        this._zAxis.crossVectors(this._xAxis, this._yAxis).normalize();
+        this._xAxis.crossVectors(this._yAxis, this._zAxis).normalize();
 
-        if (zAxis.z < -0.1) {
+        if (this._zAxis.z < -0.1) {
           this.el.object3D.visible = false;
           if (this._faceVisible !== false) {
             this._faceVisible = false;
-            showWarning(); // ← tampilkan warning
+            showWarning();
           }
           return;
         }
 
-        // Wajah terdeteksiz
+        // Wajah terdeteksi
         this.el.object3D.visible = true;
         if (this._faceVisible !== true) {
           this._faceVisible = true;
-          hideWarning(); // ← sembunyikan warning
+          hideWarning();
         }
 
-        const hatPos = top.clone();
-        const rotMat = new THREE.Matrix4().makeBasis(xAxis, yAxis, zAxis);
-        const quat = new THREE.Quaternion().setFromRotationMatrix(rotMat);
+        this._rotMat.makeBasis(this._xAxis, this._yAxis, this._zAxis);
+        this._quat.setFromRotationMatrix(this._rotMat);
 
         const obj = this.el.object3D;
         const parent = obj.parent;
         if (parent) {
-          const parentWorldInv = parent.matrixWorld.clone().invert();
-          hatPos.applyMatrix4(parentWorldInv);
-          const parentQ = new THREE.Quaternion();
-          parent.getWorldQuaternion(parentQ);
-          quat.premultiply(parentQ.invert());
+          this._parentWorldInv.copy(parent.matrixWorld).invert();
+          this._vTop.applyMatrix4(this._parentWorldInv);
+          parent.getWorldQuaternion(this._parentQ);
+          this._quat.premultiply(this._parentQ.invert());
         }
-        obj.position.copy(hatPos);
-        obj.quaternion.copy(quat);
+        obj.position.copy(this._vTop);
+        obj.quaternion.copy(this._quat);
       }
     });
 
@@ -163,7 +163,7 @@
   <div id="ar-container">
     <a-scene id="ar-scene"
       mindar-face="autoStart: true; uiLoading: false; uiError: false; filterMinCF: 0.001; filterBeta: 0.01" embedded
-      color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights, preserveDrawingBuffer: false"
+      color-space="sRGB" renderer="colorManagement: true, preserveDrawingBuffer: false"
       vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" fps-counter>
 
       <a-assets timeout="15000"></a-assets>
