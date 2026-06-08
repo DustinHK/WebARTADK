@@ -12,8 +12,8 @@
       if (constraints && constraints.video) {
         constraints.video = {
           ...(typeof constraints.video === 'object' ? constraints.video : {}),
-          width:  { ideal: 1280 },
-          height: { ideal: 720 },
+          width:  { ideal: 640 },
+          height: { ideal: 480 },
           facingMode: 'user'
         };
       }
@@ -162,8 +162,8 @@
   <!-- ══ AR SCENE ══ -->
   <div id="ar-container">
     <a-scene id="ar-scene"
-      mindar-face="autoStart: true; uiLoading: false; uiError: false; filterMinCF: 0.001; filterBeta: 0.01" embedded
-      color-space="sRGB" renderer="colorManagement: true, preserveDrawingBuffer: false"
+      mindar-face="autoStart: true; uiLoading: false; uiError: false; filterMinCF: 0.1; filterBeta: 10" embedded
+      color-space="sRGB" renderer="colorManagement: true, preserveDrawingBuffer: false, antialias: false, precision: mediump"
       vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" fps-counter>
 
       <a-assets timeout="15000"></a-assets>
