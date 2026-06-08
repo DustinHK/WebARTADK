@@ -5,6 +5,45 @@ let infoPanelVisible = false;
 let uiVisible = true;
 let _pendingPhotoUrl = null;
 
+(function initFPS() {
+  const style = document.createElement('style');
+  style.textContent = `
+    #fps-badge {
+      position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.55); color: #fff;
+      font-family: monospace; font-size: 13px;
+      padding: 4px 12px; border-radius: 20px;
+      pointer-events: none; z-index: 9999;
+      display: flex; align-items: center; gap: 6px;
+      border: 0.5px solid rgba(255,255,255,0.15);
+    }
+    #fps-badge .fps-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .fps-good { background: #4caf50; }
+    .fps-mid  { background: #ff9800; }
+    .fps-bad  { background: #f44336; }
+  `;
+  document.head.appendChild(style);
+
+  const badge = document.createElement('div');
+  badge.id = 'fps-badge';
+  badge.innerHTML = `<span class="fps-dot fps-good" id="fps-dot"></span><span id="fps-val">-- FPS</span>`;
+  document.body.appendChild(badge);
+
+  let frames = 0, last = performance.now();
+  function loop() {
+    frames++;
+    const now = performance.now();
+    if (now - last >= 1000) {
+      const fps = Math.round(frames * 1000 / (now - last));
+      document.getElementById('fps-val').textContent = fps + ' FPS';
+      const dot = document.getElementById('fps-dot');
+      dot.className = 'fps-dot ' + (fps >= 50 ? 'fps-good' : fps >= 30 ? 'fps-mid' : 'fps-bad');
+      frames = 0; last = now;
+    }
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
 /* ── Build hat selector buttons ── */
 function buildHatSelector() {
     const sel = document.getElementById('hat-selector');
