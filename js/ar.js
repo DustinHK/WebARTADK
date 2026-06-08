@@ -88,7 +88,8 @@ function startAR() {
     }, { once: true });
 
     scene.addEventListener('loaded', () => {
-        // Load occluder
+        // Load occluder (Temporarily disabled for performance test)
+        /*
         const occluderAnchor = document.getElementById('occluder-anchor');
         if (occluderAnchor) {
             const loader = new THREE.GLTFLoader();
@@ -108,6 +109,7 @@ function startAR() {
                 occluderAnchor.object3D.add(model);
             }, undefined, () => console.warn('headOccluder.glb tidak ditemukan'));
         }
+        */
     }, { once: true });
 
     // autoStart: true di a-scene — MindAR mulai otomatis, tidak perlu manual start
