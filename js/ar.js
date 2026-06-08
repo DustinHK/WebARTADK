@@ -88,8 +88,7 @@ function startAR() {
     }, { once: true });
 
     scene.addEventListener('loaded', () => {
-        // Load occluder (Temporarily disabled for performance test)
-        /*
+        // Load occluder
         const occluderAnchor = document.getElementById('occluder-anchor');
         if (occluderAnchor) {
             const loader = new THREE.GLTFLoader();
@@ -109,7 +108,6 @@ function startAR() {
                 occluderAnchor.object3D.add(model);
             }, undefined, () => console.warn('headOccluder.glb tidak ditemukan'));
         }
-        */
     }, { once: true });
 
     // autoStart: true di a-scene — MindAR mulai otomatis, tidak perlu manual start
@@ -217,20 +215,19 @@ function toggleUI() {
 
 function takeScreenshot() {
     showToast('Mengambil foto…');
-    // Berikan sedikit waktu agar UI toast muncul
     setTimeout(() => {
         try {
-            const sceneEl = document.querySelector('a-scene');
-            const arCanvas = sceneEl.canvas;
+            const arCanvas = document.querySelector('canvas');
             const video = document.querySelector('video');
             if (!arCanvas) { showToast('Canvas tidak ditemukan'); return; }
 
-            // Gunakan ukuran video sebagai acuan
+            // Gunakan ukuran video sebagai acuan, bukan canvas
             const vw = video?.videoWidth || arCanvas.width;
             const vh = video?.videoHeight || arCanvas.height;
             const sw = arCanvas.width;
             const sh = arCanvas.height;
 
+            // Gunakan ukuran canvas AR tapi pertahankan aspect ratio video
             const aspect = vw / vh;
             let w, h;
             if (sw / sh > aspect) {
@@ -246,7 +243,6 @@ function takeScreenshot() {
             combined.height = h;
             const ctx = combined.getContext('2d');
 
-            // 1. Gambar Video
             if (video && video.readyState >= 2) {
                 ctx.save();
                 ctx.translate(w, 0);
@@ -255,10 +251,6 @@ function takeScreenshot() {
                 ctx.restore();
             }
 
-            // 2. Paksa render AR Scene agar buffer WebGL terisi (penting karena preserveDrawingBuffer: false)
-            sceneEl.renderer.render(sceneEl.object3D, sceneEl.camera);
-
-            // 3. Gambar Canvas AR (segera setelah render paksa)
             ctx.drawImage(arCanvas, 0, 0, w, h);
 
             _pendingPhotoUrl = combined.toDataURL('image/png');
@@ -268,7 +260,7 @@ function takeScreenshot() {
             showToast('Gagal: ' + e.message);
             console.error(e);
         }
-    }, 100);
+    }, 300);
 }
 
 function savePhoto() {
