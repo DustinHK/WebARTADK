@@ -5,25 +5,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>AR Try-On — Topi Adat Dayak Kenyah</title>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> -->
   <script>
+    // Force High Performance WebGL
     const origGetContext = HTMLCanvasElement.prototype.getContext;
     HTMLCanvasElement.prototype.getContext = function (type, attrs) {
       if (type === 'webgl' || type === 'webgl2') {
         attrs = attrs || {};
         attrs.powerPreference = 'high-performance';
+        attrs.antialias = false;
+        attrs.alpha = false;
+        attrs.depth = true;
+        attrs.stencil = false;
+        attrs.precision = 'lowp';
       }
       return origGetContext.call(this, type, attrs);
     };
   </script>
   <script>
+    // Optimized Camera constraints
     const origGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
     navigator.mediaDevices.getUserMedia = function (constraints) {
       if (constraints && constraints.video) {
         constraints.video = {
-          ...(typeof constraints.video === 'object' ? constraints.video : {}),
-          width:  { ideal: 1280 },
-          height: { ideal: 720 },
+          width: { ideal: 640 },
+          height: { ideal: 480 },
           frameRate: { ideal: 60 },
           facingMode: 'user'
         };
@@ -34,6 +39,17 @@
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-face-aframe.prod.js"></script>
   <script>
+    // TFJS Performance Flags
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        if (window.tf) {
+          tf.env().set('WEBGL_FORCE_F16_TEXTURES', true);
+          tf.env().set('WEBGL_PACK', true);
+          tf.env().set('WEBGL_CPU_FORWARD', false);
+        }
+      }, 1000);
+    });
+
     AFRAME.registerComponent('head-center', {
       init() {
         this._freezeCount = 0;
@@ -61,7 +77,6 @@
         this._parentWorldInv = new THREE.Matrix4();
         this._parentQ = new THREE.Quaternion();
       },
-      remove() { },
       tick() {
         if (!this._lm10) {
           this._lm10 = document.getElementById('lm-10');
@@ -73,24 +88,18 @@
         }
 
         this._lm10.object3D.getWorldPosition(this._vTop);
-        this._lm152.object3D.getWorldPosition(this._vBottom);
-        this._lm234.object3D.getWorldPosition(this._vLeft);
-        this._lm454.object3D.getWorldPosition(this._vRight);
-
-        const statusEl = this._statusEl;
-
-        // Helper
-        const showWarning = () => { if (statusEl) statusEl.classList.remove('face-status-hidden'); };
-        const hideWarning = () => { if (statusEl) statusEl.classList.add('face-status-hidden'); };
-
         if (this._vTop.lengthSq() < 0.0001) {
           this.el.object3D.visible = false;
           if (this._faceVisible !== false) {
             this._faceVisible = false;
-            showWarning();
+            if (this._statusEl) this._statusEl.classList.remove('face-status-hidden');
           }
           return;
         }
+
+        this._lm152.object3D.getWorldPosition(this._vBottom);
+        this._lm234.object3D.getWorldPosition(this._vLeft);
+        this._lm454.object3D.getWorldPosition(this._vRight);
 
         if (!this._hasPrevPos) {
           this._prevPos.copy(this._vTop);
@@ -105,7 +114,7 @@
           this.el.object3D.visible = false;
           if (this._faceVisible !== false) {
             this._faceVisible = false;
-            showWarning();
+            if (this._statusEl) this._statusEl.classList.remove('face-status-hidden');
           }
           return;
         }
@@ -119,16 +128,15 @@
           this.el.object3D.visible = false;
           if (this._faceVisible !== false) {
             this._faceVisible = false;
-            showWarning();
+            if (this._statusEl) this._statusEl.classList.remove('face-status-hidden');
           }
           return;
         }
 
-        // Wajah terdeteksi
         this.el.object3D.visible = true;
         if (this._faceVisible !== true) {
           this._faceVisible = true;
-          hideWarning();
+          if (this._statusEl) this._statusEl.classList.add('face-status-hidden');
         }
 
         this._rotMat.makeBasis(this._xAxis, this._yAxis, this._zAxis);
@@ -184,8 +192,8 @@
   <div id="ar-container">
     <a-scene id="ar-scene"
       mindar-face="autoStart: true; uiLoading: false; uiError: false; filterMinCF: 0.1; filterBeta: 10" embedded
-      renderer="colorManagement: true; antialias: false"
-      vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" fps-counter stats>
+      renderer="colorManagement: false; antialias: false; precision: lowp; powerPreference: high-performance"
+      vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" fps-counter>
 
       <a-assets timeout="15000"></a-assets>
       <a-camera active="false" position="0 0 0" look-controls="enabled: false" wasd-controls="enabled: false">
