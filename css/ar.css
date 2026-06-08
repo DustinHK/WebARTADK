@@ -494,3 +494,22 @@ a-scene {
         display: none;
     }
 }
+
+/* ── FPS COUNTER ── */
+#fps-counter {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 1000;
+    background: rgba(10, 6, 2, 0.6);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--border);
+    color: var(--gold);
+    font-family: monospace;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    pointer-events: none;
+    letter-spacing: 0.5px;
+}
