@@ -7,6 +7,16 @@
   <title>AR Try-On — Topi Adat Dayak Kenyah</title>
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> -->
   <script>
+    const origGetContext = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (type, attrs) {
+      if (type === 'webgl' || type === 'webgl2') {
+        attrs = attrs || {};
+        attrs.powerPreference = 'high-performance';
+      }
+      return origGetContext.call(this, type, attrs);
+    };
+  </script>
+  <script>
     const origGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
     navigator.mediaDevices.getUserMedia = function (constraints) {
       if (constraints && constraints.video) {
@@ -30,6 +40,13 @@
         this._hasPrevPos = false;
         this._faceVisible = false;
 
+        // Cache elements
+        this._lm10 = document.getElementById('lm-10');
+        this._lm152 = document.getElementById('lm-152');
+        this._lm234 = document.getElementById('lm-234');
+        this._lm454 = document.getElementById('lm-454');
+        this._statusEl = document.getElementById('face-status');
+
         // Reusable objects
         this._vTop = new THREE.Vector3();
         this._vBottom = new THREE.Vector3();
@@ -45,18 +62,21 @@
       },
       remove() { },
       tick() {
-        const lm10 = document.getElementById('lm-10');
-        const lm152 = document.getElementById('lm-152');
-        const lm234 = document.getElementById('lm-234');
-        const lm454 = document.getElementById('lm-454');
-        if (!lm10 || !lm152 || !lm234 || !lm454) return;
+        if (!this._lm10) {
+          this._lm10 = document.getElementById('lm-10');
+          this._lm152 = document.getElementById('lm-152');
+          this._lm234 = document.getElementById('lm-234');
+          this._lm454 = document.getElementById('lm-454');
+          this._statusEl = document.getElementById('face-status');
+          if (!this._lm10) return;
+        }
 
-        lm10.object3D.getWorldPosition(this._vTop);
-        lm152.object3D.getWorldPosition(this._vBottom);
-        lm234.object3D.getWorldPosition(this._vLeft);
-        lm454.object3D.getWorldPosition(this._vRight);
+        this._lm10.object3D.getWorldPosition(this._vTop);
+        this._lm152.object3D.getWorldPosition(this._vBottom);
+        this._lm234.object3D.getWorldPosition(this._vLeft);
+        this._lm454.object3D.getWorldPosition(this._vRight);
 
-        const statusEl = document.getElementById('face-status');
+        const statusEl = this._statusEl;
 
         // Helper
         const showWarning = () => { if (statusEl) statusEl.classList.remove('face-status-hidden'); };
@@ -163,7 +183,7 @@
   <div id="ar-container">
     <a-scene id="ar-scene"
       mindar-face="autoStart: true; uiLoading: false; uiError: false; filterMinCF: 0.1; filterBeta: 10" embedded
-      color-space="sRGB" renderer="colorManagement: true, preserveDrawingBuffer: false, antialias: false, precision: mediump"
+      renderer="antialias: false; precision: lowp; powerPreference: high-performance; devicePixelRatio: 1"
       vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" fps-counter>
 
       <a-assets timeout="15000"></a-assets>
