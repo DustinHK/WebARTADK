@@ -124,7 +124,7 @@ function startAR() {
 function stopAR() {
     const scene = document.getElementById('ar-scene');
     try { scene.systems['mindar-face-system'].stop(); } catch (e) { }
-    window.location.href = 'index.html';
+    history.back();
 }
 
 /* ── Hat Selection ── */

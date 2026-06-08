@@ -7,218 +7,208 @@
   <link rel="stylesheet" href="css/style.css" />
   <style>
 
-    /* ── Hero Image ── */
-    .detail-hero {
-      position: relative;
-      width: 100%;
-      max-height: 300px;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
-      background: var(--brown-mid);
     }
 
-    .detail-hero-img {
-      width: 100%;
-      max-height: 300px;
-      object-fit: cover;
-      display: block;
+    /* ── Two-column layout (sama persis pola tentang.css) ── */
+    .detail-layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      height: calc(100vh - 56px);
     }
 
-    .detail-hero-gradient {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 120px;
-      background: linear-gradient(0deg, var(--brown-deep), transparent);
-      pointer-events: none;
-    }
-
-    .detail-hero-placeholder {
-      width: 100%;
-      height: 220px;
+    /* ══════════════════════
+       LEFT PANEL
+    ══════════════════════ */
+    .panel-left {
+      width: 55%;
+      height: 100%;
+      flex-shrink: 0;
+      background: rgba(201,168,76,0.04);
+      border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 0.75rem;
-      background: linear-gradient(135deg, var(--brown-mid), var(--brown-dark));
+      padding: 2rem 1.5rem;
+      overflow: hidden;
+      gap: 1rem;
     }
 
-    .detail-hero-placeholder-icon {
-      font-size: 4rem;
-      opacity: 0.3;
-    }
-
-    .detail-hero-placeholder-text {
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.75rem;
-      color: var(--text-dim);
-    }
-
-    /* Upload button (appears over placeholder) */
-    .upload-hint {
-      position: absolute;
-      bottom: 1rem;
-      right: 1rem;
-      background: rgba(201,168,76,0.15);
-      border: 1px dashed var(--gold-dark);
-      border-radius: 8px;
-      padding: 0.4rem 0.75rem;
-      font-size: 0.7rem;
-      color: var(--gold);
-      font-family: 'Nunito', sans-serif;
-      cursor: default;
-    }
-
-    /* ── Content ── */
-    .detail-content {
-      padding: 0 1.25rem 2rem;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    /* Nama & Badge */
-    .detail-head {
-      padding: 1.25rem 0 0.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-
-    .detail-kategori {
+    /* Gambar topi */
+    .topi-img-wrap {
+      width: 480px;
+      height: 480px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-bright);
+      background: var(--surface);
       display: flex;
       align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .topi-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 0.5rem;
+    }
+
+    .topi-img-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       gap: 0.5rem;
     }
 
-    .detail-nama {
+    .topi-img-placeholder-icon { font-size: 3.5rem; opacity: 0.2; }
+    .topi-img-placeholder-text {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.68rem;
+      color: var(--text-dim);
+    }
+
+    /* Nama topi */
+    .left-nama {
       font-family: 'Cinzel', serif;
-      font-size: 1.6rem;
+      font-size: 1.25rem;
       font-weight: 900;
       color: var(--cream);
-      line-height: 1.15;
+      text-align: center;
+      line-height: 1.3;
     }
 
-    .detail-nama span {
-      display: block;
-      font-size: 0.9rem;
-      color: var(--gold);
-      font-weight: 600;
+    .left-sub {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 0.15rem 0.65rem;
     }
 
-    /* Info Cards */
-    .info-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.6rem;
-      margin: 1rem 0;
+    /* Badge */
+    .left-badge-row {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
+    /* CTA button */
+    .left-cta {
+      margin-top: 0.5rem;
+    }
+
+    /* ══════════════════════
+       RIGHT PANEL
+    ══════════════════════ */
+    .panel-right {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 1.75rem 1.5rem 3rem;
+    }
+
+    .panel-right-inner {
+      max-width: 100%;
+    }
+
+    .panel-right-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 1rem;
+    }
+
+    /* ── Info cards (sama persis tentang.css) ── */
     .info-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 0.85rem;
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 0.6rem;
+    }
+
+    .info-card-row {
       display: flex;
       flex-direction: column;
+      padding: 1rem 1rem;
       gap: 0.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .info-card-row:last-child {
+      border-bottom: none;
     }
 
     .info-card-label {
-      font-family: 'Cinzel', serif;
-      font-size: 0.65rem;
-      color: var(--gold);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.68rem;
+      color: var(--text-dim);
     }
 
     .info-card-value {
       font-family: 'Crimson Text', serif;
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       color: var(--text-main);
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
-    /* Makna section */
-    .makna-section {
+    /* Makna — italic dengan left accent */
+    .makna-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-left: 3px solid var(--gold);
-      border-radius: var(--radius-sm);
-      padding: 1.1rem 1.25rem;
-      margin: 0.75rem 0 1.25rem;
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 0.6rem;
+      padding: 1rem;
     }
 
     .makna-label {
-      font-family: 'Cinzel', serif;
-      font-size: 0.7rem;
-      color: var(--gold);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 0.5rem;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      margin-bottom: 0.35rem;
     }
 
-    .makna-text {
+    .makna-value {
       font-family: 'Crimson Text', serif;
-      font-size: 1.02rem;
+      font-size: 0.95rem;
+      font-style: italic;
       color: var(--text-main);
       line-height: 1.7;
-      font-style: italic;
     }
 
-    /* Detail Image section */
-    .detail-img-section {
-      margin: 1rem 0;
-    }
-
-    .section-title {
+    /* Section label */
+    .section-label {
       font-family: 'Cinzel', serif;
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       color: var(--gold);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 0.6rem;
+      margin: 1rem 0 0.5rem;
     }
 
-    .detail-img-full {
-      width: 100%;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      overflow: hidden;
-      background: var(--brown-mid);
-    }
-
-    .detail-img-full img {
-      width: 100%;
-      display: block;
-      object-fit: cover;
-    }
-
-    .detail-img-placeholder {
-      width: 100%;
-      padding: 2.5rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      text-align: center;
-    }
-
-    .detail-img-placeholder .icon { font-size: 2.5rem; opacity: 0.25; }
-    .detail-img-placeholder p {
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.72rem;
-      color: var(--text-dim);
-    }
-
-    /* CTA buttons */
-    .detail-cta {
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      margin-top: 1.5rem;
-    }
-
-    /* Navigation prev/next */
+    /* Prev / Next */
     .nav-prev-next {
       display: flex;
       justify-content: space-between;
@@ -264,68 +254,101 @@
     .nav-card.next { text-align: right; margin-left: auto; }
     .nav-card.prev { margin-right: auto; }
 
-    @media (max-width: 400px) {
-      .info-cards { grid-template-columns: 1fr; }
+    /* ── Mobile ── */
+    @media (max-width: 640px) {
+      html, body { overflow: auto; }
+
+      .detail-layout {
+        flex-direction: column;
+        overflow: visible;
+        height: auto;
+      }
+
+      .panel-left {
+        width: 100%;
+        height: auto;
+        flex-shrink: unset;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 2rem 1.25rem 1.5rem;
+      }
+
+      .topi-img-wrap {
+        width: 160px;
+        height: 160px;
+      }
+
+      .panel-right {
+        overflow: visible;
+        padding: 1.5rem 1.25rem 2rem;
+      }
     }
   </style>
 </head>
 <body>
 
-<!-- Header (dynamic title) -->
-<div class="page-header" id="page-header">
-  <a href="informasi.html" class="back-btn">←</a>
-  <div>
-    <div class="page-header-title" id="header-title">Detail Topi</div>
-    <div class="page-header-sub">Dayak Kenyah</div>
+<!-- Header -->
+
+ <div class="page-header" id="page-header">
+    <a href="javascript:history.back()" class="hud-btn" style="text-decoration:none;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5" />
+        <path d="M12 19l-7-7 7-7" />
+      </svg>
+      Kembali
+    </a>
   </div>
-</div>
+<div class="detail-layout">
 
-<div class="page-content" id="page-body">
+  <!-- LEFT: Gambar + Identitas Topi -->
+  <div class="panel-left">
 
-  <!-- Hero Image -->
-  <div class="detail-hero" id="hero-wrap">
-    <div class="detail-hero-placeholder">
-      <span class="detail-hero-placeholder-icon">🎩</span>
-      <span class="detail-hero-placeholder-text">Memuat gambar…</span>
-    </div>
-  </div>
-
-  <!-- Content -->
-  <div class="detail-content">
-    <div class="detail-head">
-      <div class="detail-kategori" id="kategori-wrap"><!-- badge --></div>
-      <h1 class="detail-nama" id="detail-nama">—</h1>
-    </div>
-
-    <!-- Info cards: bahan, pengguna, fungsi -->
-    <div class="info-cards" id="info-cards"><!-- JS --></div>
-
-    <!-- Makna Filosofis -->
-    <div class="makna-section">
-      <div class="makna-label">◆ Makna Filosofis</div>
-      <div class="makna-text" id="makna-text">—</div>
-    </div>
-
-    <!-- Gambar Detail -->
-    <div class="detail-img-section">
-      <div class="section-title">Gambar Detail</div>
-      <div class="detail-img-full" id="detail-img-wrap">
-        <div class="detail-img-placeholder">
-          <span class="icon">🖼</span>
-          <p>Ganti <code>gambarDetail</code> di <code>js/data.js</code> dengan path gambar detail Anda</p>
-        </div>
+    <div class="topi-img-wrap" id="topi-img-wrap">
+      <div class="topi-img-placeholder" id="img-placeholder">
+        <span class="topi-img-placeholder-icon">🎩</span>
+        <span class="topi-img-placeholder-text">Memuat gambar…</span>
       </div>
     </div>
 
-    <!-- CTA -->
-    <div class="detail-cta">
-      <a class="btn-primary" id="cta-ar" href="ar.html">🎭 Coba di AR</a>
-      <a class="btn-secondary" href="informasi.html">← Kembali ke Daftar</a>
+    <div class="left-nama" id="left-nama">—</div>
+    <!-- <div class="left-sub">Dayak Kenyah</div> -->
+
+    <div class="left-badge-row" id="kategori-wrap"></div>
+
+    <div class="left-cta">
+      <a class="btn-primary" id="cta-ar" href="ar.html"> <div class="card-ar-emblem">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+      <circle cx="12" cy="13" r="4"/>
+    </svg>
+  </div>Coba di AR</a>
     </div>
 
-    <!-- Prev / Next navigation -->
-    <div class="nav-prev-next" id="nav-prev-next"><!-- JS --></div>
   </div>
+
+  <!-- RIGHT: Informasi Lengkap -->
+  <div class="panel-right">
+    <div class="panel-right-inner">
+
+      <div class="panel-right-title">Informasi Lengkap</div>
+
+      <!-- Info utama: Bahan, Pengguna, Kegunaan dalam 1 card -->
+      <div class="info-card" id="info-card-main"><!-- JS --></div>
+
+      <!-- Makna Filosofis -->
+      <div class="section-label">Makna / Filosofi</div>
+      <div class="makna-card" id="makna-wrap" style="display:none">
+        <div class="makna-label">◆ Makna Filosofis</div>
+        <div class="makna-value" id="makna-text">—</div>
+      </div>
+
+      <!-- Prev / Next -->
+      <div class="nav-prev-next" id="nav-prev-next"><!-- JS --></div>
+
+    </div>
+  </div>
+
 </div>
 
 <div id="toast"></div>
@@ -333,62 +356,49 @@
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
 <script>
-  // ── Load topi by URL param ──────────────────────────────
-  const id = parseInt(new URLSearchParams(window.location.search).get('id')) || 1;
+  const id   = parseInt(new URLSearchParams(window.location.search).get('id')) || 1;
   const topi = getTopiById(id);
 
   if (!topi) {
-    document.getElementById('detail-nama').textContent = 'Topi tidak ditemukan';
+    document.getElementById('left-nama').textContent = 'Topi tidak ditemukan';
   } else {
-    // Header
-    document.getElementById('header-title').textContent = topi.nama;
+    // Header & title
+    // document.getElementById('header-title').textContent = topi.nama;
     document.title = `${topi.nama} — Dayak Kenyah`;
+    document.getElementById('left-nama').textContent = topi.nama;
 
-    // Hero Image
-    const heroWrap = document.getElementById('hero-wrap');
-    heroWrap.innerHTML = `
-      <img class="detail-hero-img" src="${topi.gambar}" alt="${topi.nama}"
-           onerror="this.parentElement.innerHTML = '<div class=\\'detail-hero-placeholder\\'><span class=\\'detail-hero-placeholder-icon\\'>🎩</span><span class=\\'detail-hero-placeholder-text\\'>Tambahkan gambar di js/data.js</span></div>'" />
-      <div class="detail-hero-gradient"></div>
-    `;
+    // Image
+    const placeholder = document.getElementById('img-placeholder');
+    const img = document.createElement('img');
+    img.alt = topi.nama;
+    img.src = topi.gambarDetail;
+    img.onerror = function() { /* placeholder tetap */ };
+    img.onload  = function() { placeholder.replaceWith(img); };
 
-    // Badge
-    const bClass = topi.kategori === 'Tapung' ? 'badge-tapung' : 'badge-bluko';
-    document.getElementById('kategori-wrap').innerHTML =
-      `<span class="badge ${bClass}">${topi.kategori}</span>`;
+    // Badge kategori
+   
 
-    // Nama
-    document.getElementById('detail-nama').textContent = topi.nama;
-
-    // Info Cards
-    const cards = [
-      { label: '🧱 Bahan / Material', value: topi.bahan },
-      { label: '👤 Pengguna',         value: topi.pengguna },
-      { label: '🎯 Fungsi / Kegunaan', value: topi.fungsi }
+    // Info rows dalam satu card
+    const rows = [
+      { label: 'Bahan',    value: topi.bahan    },
+      { label: 'Pengguna', value: topi.pengguna },
+      { label: 'Kegunaan', value: topi.fungsi   },
     ];
-
-    const cardsWrap = document.getElementById('info-cards');
-    cardsWrap.innerHTML = cards.map(c => `
-      <div class="info-card">
-        <div class="info-card-label">${c.label}</div>
-        <div class="info-card-value">${c.value}</div>
+    document.getElementById('info-card-main').innerHTML = rows.map(r => `
+      <div class="info-card-row">
+        <div class="info-card-label">${r.label}</div>
+        <div class="info-card-value">${r.value}</div>
       </div>
     `).join('');
 
     // Makna
-    document.getElementById('makna-text').textContent = topi.makna;
-
-    // Gambar Detail
-    const detailImgWrap = document.getElementById('detail-img-wrap');
-    if (topi.gambarDetail) {
-      detailImgWrap.innerHTML = `
-        <img src="${topi.gambarDetail}" alt="Detail ${topi.nama}" style="width:100%;display:block;object-fit:cover;"
-             onerror="this.parentElement.innerHTML = '<div class=\\'detail-img-placeholder\\'><span class=\\'icon\\'>🖼</span><p>Ganti gambarDetail di js/data.js dengan path gambar Anda</p></div>'" />
-      `;
+    if (topi.makna) {
+      document.getElementById('makna-text').textContent = topi.makna;
+      document.getElementById('makna-wrap').style.display = '';
     }
 
     // Prev / Next
-    const navWrap = document.getElementById('nav-prev-next');
+    const navWrap  = document.getElementById('nav-prev-next');
     const prevTopi = TOPI_DATA.find(t => t.id === id - 1);
     const nextTopi = TOPI_DATA.find(t => t.id === id + 1);
 

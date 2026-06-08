@@ -78,14 +78,23 @@
         const delta = top.distanceTo(this._prevPos);
         if (delta < 0.000001) { this._freezeCount++; }
         else { this._freezeCount = 0; this._prevPos.copy(top); }
+        // if (this._freezeCount > 60) {
+        //   this.el.object3D.visible = false;
+        //   if (this._faceVisible !== false) {
+        //     this._faceVisible = false;
+        //     showWarning(); // ← tampilkan warning
+        //   }
+        //   return;
+        // }
         if (this._freezeCount > 60) {
-          this.el.object3D.visible = false;
-          if (this._faceVisible !== false) {
-            this._faceVisible = false;
-            showWarning(); // ← tampilkan warning
-          }
-          return;
-        }
+    this._freezeCount = 0; // TEMP: nonaktifkan anti-freeze
+    // this.el.object3D.visible = false;
+    // if (this._faceVisible !== false) {
+    //     this._faceVisible = false;
+    //     showWarning();
+    // }
+    // return;
+}
 
         const yAxis = new THREE.Vector3().subVectors(top, bottom).normalize();
         const xAxis = new THREE.Vector3().subVectors(right, left).normalize();
