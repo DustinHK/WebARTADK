@@ -6,31 +6,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>AR Try-On — Topi Adat Dayak Kenyah</title>
   <script>
-    // Force High Performance WebGL
     const origGetContext = HTMLCanvasElement.prototype.getContext;
     HTMLCanvasElement.prototype.getContext = function (type, attrs) {
       if (type === 'webgl' || type === 'webgl2') {
         attrs = attrs || {};
         attrs.powerPreference = 'high-performance';
-        attrs.antialias = false;
-        attrs.alpha = false;
-        attrs.depth = true;
-        attrs.stencil = false;
-        attrs.precision = 'lowp';
+        attrs.precision = 'highp';
+        attrs.antialias = true;
       }
       return origGetContext.call(this, type, attrs);
     };
   </script>
   <script>
-    // Optimized Camera constraints
     const origGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
     navigator.mediaDevices.getUserMedia = function (constraints) {
       if (constraints && constraints.video) {
         constraints.video = {
-          width: { ideal: 640 },
-          height: { ideal: 480 },
-          frameRate: { ideal: 60 },
-          facingMode: 'user'
+          facingMode: 'user',
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
         };
       }
       return origGetUserMedia(constraints);
@@ -39,30 +33,12 @@
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-face-aframe.prod.js"></script>
   <script>
-    // TFJS Performance Flags
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        if (window.tf) {
-          tf.env().set('WEBGL_FORCE_F16_TEXTURES', true);
-          tf.env().set('WEBGL_PACK', true);
-          tf.env().set('WEBGL_CPU_FORWARD', false);
-        }
-      }, 1000);
-    });
-
     AFRAME.registerComponent('head-center', {
       init() {
         this._freezeCount = 0;
         this._prevPos = new THREE.Vector3();
         this._hasPrevPos = false;
         this._faceVisible = false;
-
-        // Cache elements
-        this._lm10 = document.getElementById('lm-10');
-        this._lm152 = document.getElementById('lm-152');
-        this._lm234 = document.getElementById('lm-234');
-        this._lm454 = document.getElementById('lm-454');
-        this._statusEl = document.getElementById('face-status');
 
         // Reusable objects
         this._vTop = new THREE.Vector3();
@@ -76,6 +52,12 @@
         this._quat = new THREE.Quaternion();
         this._parentWorldInv = new THREE.Matrix4();
         this._parentQ = new THREE.Quaternion();
+
+        this._lm10 = null;
+        this._lm152 = null;
+        this._lm234 = null;
+        this._lm454 = null;
+        this._statusEl = null;
       },
       tick() {
         if (!this._lm10) {
@@ -87,7 +69,17 @@
           if (!this._lm10) return;
         }
 
+        // Penting: Update matrix agar koordinat world terbaru terdeteksi
+        this._lm10.object3D.updateMatrixWorld();
+        this._lm152.object3D.updateMatrixWorld();
+        this._lm234.object3D.updateMatrixWorld();
+        this._lm454.object3D.updateMatrixWorld();
+
         this._lm10.object3D.getWorldPosition(this._vTop);
+        this._lm152.object3D.getWorldPosition(this._vBottom);
+        this._lm234.object3D.getWorldPosition(this._vLeft);
+        this._lm454.object3D.getWorldPosition(this._vRight);
+
         if (this._vTop.lengthSq() < 0.0001) {
           this.el.object3D.visible = false;
           if (this._faceVisible !== false) {
@@ -96,10 +88,6 @@
           }
           return;
         }
-
-        this._lm152.object3D.getWorldPosition(this._vBottom);
-        this._lm234.object3D.getWorldPosition(this._vLeft);
-        this._lm454.object3D.getWorldPosition(this._vRight);
 
         if (!this._hasPrevPos) {
           this._prevPos.copy(this._vTop);
@@ -191,16 +179,13 @@
   <!-- ══ AR SCENE ══ -->
   <div id="ar-container">
     <a-scene id="ar-scene"
-      mindar-face="autoStart: true; uiLoading: false; uiError: false; filterMinCF: 0.1; filterBeta: 10" embedded
-      renderer="colorManagement: false; antialias: false; precision: lowp; powerPreference: high-performance"
+      mindar-face="autoStart: true; uiLoading: false; uiError: false; filterMinCF: 0.001; filterBeta: 1" embedded
+      renderer="colorManagement: true, antialias: true, physicallyCorrectLights"
       vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" fps-counter>
 
       <a-assets timeout="15000"></a-assets>
       <a-camera active="false" position="0 0 0" look-controls="enabled: false" wasd-controls="enabled: false">
       </a-camera>
-
-      <!-- Occluder anchor -->
-      <a-entity mindar-face-target="anchorIndex: 168" id="occluder-anchor"></a-entity>
 
       <!-- Landmark referensi (tidak terlihat) -->
       <a-entity mindar-face-target="anchorIndex: 10" id="lm-10" visible="false"></a-entity>
