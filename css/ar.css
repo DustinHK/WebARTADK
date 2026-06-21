@@ -482,7 +482,31 @@ a-scene {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
 }
+@media (min-width: 768px) {
+    #info-panel {
+        width: 180px;
+        right: 1.5rem;
+        padding: 1.1rem 1rem;
+        gap: 0.65rem;
+    }
 
+    .info-panel-label {
+        font-size: 0.72rem;
+    }
+
+    .info-panel-name {
+        font-size: 0.95rem;
+    }
+
+    .info-panel-user {
+        font-size: 0.82rem;
+    }
+
+    .info-panel-link {
+        font-size: 0.78rem;
+        padding: 0.55rem;
+    }
+}
 /* Mobile tweak */
 @media (max-width: 480px) {
     #info-panel {

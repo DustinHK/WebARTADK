@@ -1,5 +1,4 @@
 
-/* ── REAL ASSET PRELOADER ─────────────────────────── */
 async function preloadAssets() {
     const splashText = document.getElementById('splash-text');
     const progressFill = document.querySelector('.progress-fill');

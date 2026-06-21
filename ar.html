@@ -5,9 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>AR Try-On — Topi Adat Dayak Kenyah</title>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> -->
   <script>
-    // Patch WebGL agar preserveDrawingBuffer selalu true
     const origGetContext = HTMLCanvasElement.prototype.getContext;
     HTMLCanvasElement.prototype.getContext = function (type, attrs) {
       if (type === 'webgl' || type === 'webgl2') {
@@ -60,8 +58,6 @@
         const right = getWP(lm454);
 
         const statusEl = document.getElementById('face-status');
-
-        // Helper
         const showWarning = () => { if (statusEl) statusEl.classList.remove('face-status-hidden'); };
         const hideWarning = () => { if (statusEl) statusEl.classList.add('face-status-hidden'); };
 
@@ -69,7 +65,7 @@
           this.el.object3D.visible = false;
           if (this._faceVisible !== false) {
             this._faceVisible = false;
-            showWarning(); // ← tampilkan warning
+            showWarning();
           }
           return;
         }
@@ -82,7 +78,7 @@
           this.el.object3D.visible = false;
           if (this._faceVisible !== false) {
             this._faceVisible = false;
-            showWarning(); // ← tampilkan warning
+            showWarning();
           }
           return;
         }
@@ -96,7 +92,7 @@
           this.el.object3D.visible = false;
           if (this._faceVisible !== false) {
             this._faceVisible = false;
-            showWarning(); // ← tampilkan warning
+            showWarning();
           }
           return;
         }
@@ -105,7 +101,7 @@
         this.el.object3D.visible = true;
         if (this._faceVisible !== true) {
           this._faceVisible = true;
-          hideWarning(); // ← sembunyikan warning
+          hideWarning();
         }
 
         const hatPos = top.clone();
@@ -133,15 +129,11 @@
 </head>
 
 <body>
-
-  <!-- ══ LOADING OVERLAY ══ -->
   <div id="loading-overlay">
     <div class="load-spinner"></div>
     <div class="load-title">Memuat AR Engine</div>
     <div class="load-sub">Harap izinkan akses kamera…</div>
   </div>
-
-  <!-- ══ AR SCENE ══ -->
   <div id="ar-container">
     <a-scene id="ar-scene"
       mindar-face="autoStart: true; uiLoading: false; uiError: false; filterMinCF: 0.001; filterBeta: 0.01" embedded
@@ -151,21 +143,15 @@
       <a-assets timeout="15000"></a-assets>
       <a-camera active="false" position="0 0 0" look-controls="enabled: false" wasd-controls="enabled: false">
       </a-camera>
-
-      <!-- Occluder anchor -->
       <a-entity mindar-face-target="anchorIndex: 168" id="occluder-anchor"></a-entity>
-
-      <!-- Landmark referensi (tidak terlihat) -->
       <a-entity mindar-face-target="anchorIndex: 10" id="lm-10" visible="false"></a-entity>
       <a-entity mindar-face-target="anchorIndex: 152" id="lm-152" visible="false"></a-entity>
       <a-entity mindar-face-target="anchorIndex: 234" id="lm-234" visible="false"></a-entity>
       <a-entity mindar-face-target="anchorIndex: 454" id="lm-454" visible="false"></a-entity>
-
-      <!-- Hat container -->
       <a-entity id="hat-container" head-center render-order="1">
         <a-entity id="hat-offset" position="0 0 0">
 
-          <!-- HAT 1: Tapung Udeng -->
+
           <a-entity id="hat1" position="0 0 0" visible="true">
             <a-entity id="hat1-model" gltf-model="./assets/models/hat1.glb" scale="0.65 0.65 0.65"
               visible="false"></a-entity>
@@ -175,7 +161,6 @@
             </a-entity>
           </a-entity>
 
-          <!-- HAT 2: Tapung Longe -->
           <a-entity id="hat2" position="0 0 0" visible="false">
             <a-entity id="hat2-model" gltf-model="./assets/models/hat2.glb" scale="0.65 0.65 0.65"
               visible="false"></a-entity>
@@ -185,7 +170,6 @@
             </a-entity>
           </a-entity>
 
-          <!-- HAT 3: Tapung Sekeduq -->
           <a-entity id="hat3" position="0 0 0" visible="false">
             <a-entity id="hat3-model" gltf-model="./assets/models/hat3.glb" scale="0.65 0.65 0.65"
               visible="false"></a-entity>
@@ -195,7 +179,6 @@
             </a-entity>
           </a-entity>
 
-          <!-- HAT 4: Tapung Uwai -->
           <a-entity id="hat4" position="0 0 0" visible="false">
             <a-entity id="hat4-model" gltf-model="./assets/models/hat4.glb" scale="0.65 0.65 0.65"
               visible="false"></a-entity>
@@ -205,7 +188,6 @@
             </a-entity>
           </a-entity>
 
-          <!-- HAT 5: Tapung Pek -->
           <a-entity id="hat5" position="0 0 0" visible="false">
             <a-entity id="hat5-model" gltf-model="./assets/models/hat5.glb" scale="0.65 0.65 0.65"
               visible="false"></a-entity>
@@ -215,7 +197,6 @@
             </a-entity>
           </a-entity>
 
-          <!-- HAT 6: Tapung Aban -->
           <a-entity id="hat6" position="0 0 0" visible="false">
             <a-entity id="hat6-model" gltf-model="./assets/models/hat6.glb" scale="0.65 0.65 0.65"
               visible="false"></a-entity>
@@ -225,7 +206,6 @@
             </a-entity>
           </a-entity>
 
-          <!-- HAT 7: Bluko Laki -->
           <a-entity id="hat7" position="0 0 0" visible="false">
             <a-entity id="hat7-model" gltf-model="./assets/models/hat7.glb" scale="0.65 0.65 0.65"
               visible="false"></a-entity>
@@ -235,7 +215,6 @@
             </a-entity>
           </a-entity>
 
-          <!-- HAT 8: Bluko Leto -->
           <a-entity id="hat8" position="0 0 0" visible="false">
             <a-entity id="hat8-model" gltf-model="./assets/models/hat8.glb" scale="0.65 0.65 0.65"
               visible="false"></a-entity>
@@ -244,11 +223,11 @@
               <a-cylinder color="#6A1A44" radius="0.12" height="0.02" position="0 0 0"></a-cylinder>
             </a-entity>
           </a-entity>
-        </a-entity><!-- /hat-offset -->
-      </a-entity><!-- /hat-container -->
+        </a-entity>
+      </a-entity>
     </a-scene>
   </div>
-  <!-- ══ INFO PANEL (samping kanan) ══ -->
+
   <div id="info-panel">
     <div class="info-panel-label">Topi Aktif</div>
     <div class="info-panel-name" id="ip-name">—</div>
@@ -312,13 +291,10 @@
         </button>
       </div>
     </div>
-    <!-- Bottom controls -->
     <div class="hud-bottom">
       <p class="instruction-chip">Arahkan wajah ke kamera agar topi muncul</p>
-      <!-- Hat Selector -->
       <div id="hat-selector">
       </div>
-      <!-- Action Buttons -->
       <div class="ar-actions">
         <button class="ar-action-btn secondary" onclick="resetAR()">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -339,10 +315,8 @@
       </div>
     </div>
   </div>
-  <!-- Flash overlay -->
   <div id="flash-overlay"></div>
 
-  <!-- Preview Modal -->
   <div id="preview-modal">
     <div class="preview-label">Pratinjau Foto</div>
     <img id="preview-img" src="" alt="Preview" />
@@ -366,7 +340,6 @@
       </button>
     </div>
   </div>
-  <!-- Toast -->
   <div id="toast"></div>
   <script src="js/data.js"></script>
   <script src="js/ar.js"></script>

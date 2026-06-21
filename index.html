@@ -1,204 +1,202 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Topi Adat Dayak Kenyah — WebAR</title>
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IM+Fell+English:ital@0;1&family=Josefin+Sans:wght@300;400;600&display=swap" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IM+Fell+English:ital@0;1&family=Josefin+Sans:wght@300;400;600&display=swap" />
   <link rel="stylesheet" href="css/index.css" />
 </head>
+
 <body>
 
-<!-- ══ SPLASH ════════════════════════════════════════ -->
-<div id="splash">
-  <div class="tribal-border top"><div class="tribal-border-inner"></div></div>
-
-  <div class="splash-medallion">
-    <div class="medallion-ring"></div>
-    <div class="medallion-ring-2"></div>
-    <div class="medallion-core">
-      <img src="./assets/images/ui/logo.png" alt="icon" style="width: 250%; height: 250%; object-fit: contain;" />
+  <div id="splash">
+    <div class="tribal-border top">
+      <div class="tribal-border-inner"></div>
     </div>
-  </div>
 
-  <p class="splash-label">AR Try-on</p>
-  <h1 class="splash-title">
-    Topi Adat
-    <em>Dayak Kenyah</em>
-  </h1>
-  <p class="splash-desc">Warisan Budaya Kalimantan Timur</p>
-
-  <div class="progress-track">
-    <div class="progress-deco">
-      <div class="progress-diamond"></div>
-      <div class="progress-line">
-        <div class="progress-fill"></div>
-      </div>
-      <div class="progress-diamond"></div>
-    </div>
-    <p class="progress-text" id="splash-text">Memuat aplikasi…</p>
-  </div>
-
-  <div class="tribal-border bottom"><div class="tribal-border-inner"></div></div>
-</div>
-
-<!-- ══ MAIN ════════════════════════════════════════ -->
-<div id="main">
-
-  <!-- Header -->
-  <header class="site-header">
-    <div class="tribal-strip"></div>
-    <div class="header-inner">
-      <div class="header-brand">
-        <div class="brand-icon"><img src="./assets/images/ui/logo.png" alt="icon" style="width: 150%; height: 150%; object-fit: contain;" />
-        </div>
-        <div class="brand-text">
-          <div class="brand-name">Topi Adat</div>
-          <div class="brand-sub">Dayak Kenyah</div>
-        </div>
+    <div class="splash-medallion">
+      <div class="medallion-ring"></div>
+      <div class="medallion-ring-2"></div>
+      <div class="medallion-core">
+        <img src="./assets/images/ui/logo.png" alt="icon" style="width: 250%; height: 250%; object-fit: contain;" />
       </div>
     </div>
-  </header>
 
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-sunburst"></div>
-
-    <p class="hero-eyebrow fade-up">Warisan Budaya Kalimantan Timur</p>
-
-    <h1 class="hero-title fade-up">
+    <p class="splash-label">AR Try-on</p>
+    <h1 class="splash-title">
       Topi Adat
-      <span class="gold italic">Dayak Kenyah</span>
+      <em>Dayak Kenyah</em>
     </h1>
+    <p class="splash-desc">Warisan Budaya Kalimantan Timur</p>
 
-    <p class="hero-subtitle fade-up">
-      Jelajahi kekayaan budaya leluhur lewat teknologi<br>
-      Augmented Reality
-    </p>
-
-    <div class="ornament-line fade-up">
-      <div class="orn-line"></div>
-      <div class="orn-center">◆ ◆ ◆</div>
-      <div class="orn-line"></div>
+    <div class="progress-track">
+      <div class="progress-deco">
+        <div class="progress-diamond"></div>
+        <div class="progress-line">
+          <div class="progress-fill"></div>
+        </div>
+        <div class="progress-diamond"></div>
+      </div>
+      <p class="progress-text" id="splash-text">Memuat aplikasi…</p>
     </div>
 
-    <!-- Thumbnail topi -->
-    <div class="thumb-strip fade-up" id="hero-thumbs"></div>
-  </section>
-
-  <!-- Divider -->
-  <div class="section-divider">
-    <div class="div-line"></div>
-    <div class="div-motif">
-      <div class="div-dot"></div>
-      <div class="div-dash"></div>
-      <div class="div-dot"></div>
-      <div class="div-dash"></div>
-      <div class="div-dot"></div>
-    </div>
-    <div class="div-line rev"></div>
-  </div>
-
-  <!-- Menu -->
-  <section class="menu-section">
-    <div class="section-label">
-      <span class="section-label-text">Jelajahi</span>
-      <div class="section-label-line"></div>
-    </div>
-
-    <!-- AR Card utama -->
-   <a href="ar.html" class="card-ar-main">
-  <div class="card-pattern"></div>
-  <div class="card-ar-emblem">
-    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-      <circle cx="12" cy="13" r="4"/>
-    </svg>
-  </div>
-  <div class="card-ar-body">
-    <div class="card-ar-label">Virtual Try-On</div>
-    <div class="card-ar-title">Mulai AR</div>
-    <div class="card-ar-desc">
-      Coba topi adat secara virtual langsung di wajah Anda menggunakan kamera
+    <div class="tribal-border bottom">
+      <div class="tribal-border-inner"></div>
     </div>
   </div>
-  <div class="card-ar-arrow">→</div>
-</a>
 
-    <!-- Grid card -->
-   <div class="cards-grid">
-  <a href="informasi.html" class="menu-card">
-    <div class="card-icon">
-      <!-- Buku / Informasi -->
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-      </svg>
+  <div id="main">
+    <header class="site-header">
+      <div class="tribal-strip"></div>
+      <div class="header-inner">
+        <div class="header-brand">
+          <div class="brand-icon"><img src="./assets/images/ui/logo.png" alt="icon"
+              style="width: 150%; height: 150%; object-fit: contain;" />
+          </div>
+          <div class="brand-text">
+            <div class="brand-name">Topi Adat</div>
+            <div class="brand-sub">Dayak Kenyah</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-sunburst"></div>
+
+      <p class="hero-eyebrow fade-up">Warisan Budaya Kalimantan Timur</p>
+
+      <h1 class="hero-title fade-up">
+        Topi Adat
+        <span class="gold italic">Dayak Kenyah</span>
+      </h1>
+
+      <p class="hero-subtitle fade-up">
+        Jelajahi kekayaan budaya leluhur lewat teknologi<br>
+        Augmented Reality
+      </p>
+
+      <div class="ornament-line fade-up">
+        <div class="orn-line"></div>
+        <div class="orn-center">◆ ◆ ◆</div>
+        <div class="orn-line"></div>
+      </div>
+
+      <div class="thumb-strip fade-up" id="hero-thumbs"></div>
+    </section>
+
+    <div class="section-divider">
+      <div class="div-line"></div>
+      <div class="div-motif">
+        <div class="div-dot"></div>
+        <div class="div-dash"></div>
+        <div class="div-dot"></div>
+        <div class="div-dash"></div>
+        <div class="div-dot"></div>
+      </div>
+      <div class="div-line rev"></div>
     </div>
-    <div class="card-name">Informasi Topi</div>
-    <div class="card-desc">Makna dan filosofi topi adat</div>
-    <div class="card-arrow">→</div>
-  </a>
 
-  <a href="panduan.html" class="menu-card">
-    <div class="card-icon">
-      <!-- List / Panduan -->
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="8" y1="6" x2="21" y2="6"/>
-        <line x1="8" y1="12" x2="21" y2="12"/>
-        <line x1="8" y1="18" x2="21" y2="18"/>
-        <line x1="3" y1="6" x2="3.01" y2="6"/>
-        <line x1="3" y1="12" x2="3.01" y2="12"/>
-        <line x1="3" y1="18" x2="3.01" y2="18"/>
-      </svg>
-    </div>
-    <div class="card-name">Panduan</div>
-    <div class="card-desc">Cara menggunakan aplikasi</div>
-    <div class="card-arrow">→</div>
-  </a>
+    <section class="menu-section">
+      <div class="section-label">
+        <span class="section-label-text">Jelajahi</span>
+        <div class="section-label-line"></div>
+      </div>
 
-  <a href="tentang.html" class="menu-card">
-    <div class="card-icon">
-      <!-- Info / Tentang -->
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="12" y1="8" x2="12" y2="12"/>
-        <line x1="12" y1="16" x2="12.01" y2="16"/>
-      </svg>
-    </div>
-    <div class="card-name">Tentang</div>
-    <div class="card-desc">Info pengembang aplikasi</div>
-    <div class="card-arrow">→</div>
-  </a>
-</div>
+      <a href="ar.html" class="card-ar-main">
+        <div class="card-pattern"></div>
+        <div class="card-ar-emblem">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+            <circle cx="12" cy="13" r="4" />
+          </svg>
+        </div>
+        <div class="card-ar-body">
+          <div class="card-ar-label">Virtual Try-On</div>
+          <div class="card-ar-title">Mulai AR</div>
+          <div class="card-ar-desc">
+            Coba topi adat secara virtual langsung di wajah Anda menggunakan kamera
+          </div>
+        </div>
+        <div class="card-ar-arrow">→</div>
+      </a>
 
-  </section>
+      <div class="cards-grid">
+        <a href="informasi.html" class="menu-card">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+          </div>
+          <div class="card-name">Informasi Topi</div>
+          <div class="card-desc">Makna dan filosofi topi adat</div>
+          <div class="card-arrow">→</div>
+        </a>
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="footer-motif">
-      <div class="footer-diamond"></div>
-      <div class="footer-diamond"></div>
-      <div class="footer-diamond"></div>
-      <div class="footer-diamond"></div>
-      <div class="footer-diamond"></div>
-    </div>
-    <p class="footer-text">
-      © 2025 · <strong>Universitas Mulawarman</strong> · Fakultas Teknik Informatika
-    </p>
-  </footer>
-</div>
-<!-- PINDAH ke sebelum <div id="toast"> -->
-<a-scene id="preload-scene" style="display:none" embedded vr-mode-ui="enabled:false">
-  <a-assets timeout="60000" id="preload-assets"></a-assets>
-</a-scene>
-<div id="toast"></div>
+        <a href="panduan.html" class="menu-card">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6" />
+              <line x1="8" y1="12" x2="21" y2="12" />
+              <line x1="8" y1="18" x2="21" y2="18" />
+              <line x1="3" y1="6" x2="3.01" y2="6" />
+              <line x1="3" y1="12" x2="3.01" y2="12" />
+              <line x1="3" y1="18" x2="3.01" y2="18" />
+            </svg>
+          </div>
+          <div class="card-name">Panduan</div>
+          <div class="card-desc">Cara menggunakan aplikasi</div>
+          <div class="card-arrow">→</div>
+        </a>
 
-<script src="js/data.js"></script>
-<script src="js/app.js"></script>
-<script src="js/index.js"></script>
+        <a href="tentang.html" class="menu-card">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+          </div>
+          <div class="card-name">Tentang</div>
+          <div class="card-desc">Info pengembang aplikasi</div>
+          <div class="card-arrow">→</div>
+        </a>
+      </div>
+
+    </section>
+
+    <footer class="site-footer">
+      <div class="footer-motif">
+        <div class="footer-diamond"></div>
+        <div class="footer-diamond"></div>
+        <div class="footer-diamond"></div>
+        <div class="footer-diamond"></div>
+        <div class="footer-diamond"></div>
+      </div>
+      <p class="footer-text">
+        © 2025 · <strong>Universitas Mulawarman</strong> · Fakultas Teknik Informatika
+      </p>
+    </footer>
+  </div>
+  <a-scene id="preload-scene" style="display:none" embedded vr-mode-ui="enabled:false">
+    <a-assets timeout="60000" id="preload-assets"></a-assets>
+  </a-scene>
+  <div id="toast"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/index.js"></script>
 
 </body>
+
 </html>

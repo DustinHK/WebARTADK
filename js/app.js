@@ -1,9 +1,5 @@
-/**
- * APP.JS — Fungsi navigasi & utilitas bersama
- * Topi Adat Dayak Kenyah WebAR
- */
 
-// ── Navigasi ──────────────────────────────────────────────
+
 function goTo(page) {
   window.location.href = page;
 }
@@ -12,9 +8,8 @@ function goBack() {
   window.location.href = 'index.html';
 }
 
-// ── Placeholder image fallback ─────────────────────────────
 function handleImgError(img, nama) {
-  // Buat placeholder SVG dengan nama topi
+
   const text = nama || 'Topi';
   const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'>
     <rect width='300' height='200' fill='%23231c14'/>
@@ -33,7 +28,6 @@ function handleImgError(img, nama) {
   img.onerror = null;
 }
 
-// ── Toast Notification ────────────────────────────────────
 function showToast(msg, duration = 2500) {
   let toast = document.getElementById('toast');
   if (!toast) {
@@ -46,12 +40,9 @@ function showToast(msg, duration = 2500) {
   setTimeout(() => toast.classList.remove('show'), duration);
 }
 
-// ── URL Params ────────────────────────────────────────────
 function getParam(key) {
   return new URLSearchParams(window.location.search).get(key);
 }
-
-// ── Ripple effect pada klik tombol ───────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.btn-primary, .btn-secondary, .menu-card').forEach(el => {
     el.addEventListener('click', function (e) {

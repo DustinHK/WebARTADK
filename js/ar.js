@@ -5,7 +5,6 @@ let infoPanelVisible = false;
 let uiVisible = true;
 let _pendingPhotoUrl = null;
 
-/* ── Build hat selector buttons ── */
 function buildHatSelector() {
     const sel = document.getElementById('hat-selector');
     TOPI_DATA.forEach((topi, i) => {
@@ -34,7 +33,6 @@ function buildHatSelector() {
     });
 }
 
-/* ── Boot ── */
 window.addEventListener('load', () => {
     buildHatSelector();
     startAR();
@@ -51,12 +49,10 @@ function startAR() {
 
         document.getElementById('loading-overlay').classList.add('hidden');
         showToast('AR siap! Arahkan wajah ke kamera 😊');
-        // Cache entities
         for (let n = 1; n <= TOTAL_HATS; n++) {
             hatEntities[n] = document.getElementById(`hat${n}`);
         }
 
-        // Activate models
         for (let n = 1; n <= TOTAL_HATS; n++) {
             const modelEl = document.getElementById(`hat${n}-model`);
             const placeholder = document.getElementById(`hat${n}-placeholder`);
@@ -73,11 +69,9 @@ function startAR() {
             else modelEl.addEventListener('model-loaded', activate, { once: true });
         }
 
-        // Show info panel & update
         document.getElementById('info-panel').classList.add('visible');
         infoPanelVisible = true;
         updateInfoPanel(1);
-        // Tampilkan warning saat AR ready (belum ada wajah)
         const statusEl = document.getElementById('face-status');
         if (statusEl) statusEl.classList.remove('face-status-hidden');
     }, { once: true });
@@ -88,7 +82,6 @@ function startAR() {
     }, { once: true });
 
     scene.addEventListener('loaded', () => {
-        // Load occluder
         const occluderAnchor = document.getElementById('occluder-anchor');
         if (occluderAnchor) {
             const loader = new THREE.GLTFLoader();
@@ -110,8 +103,6 @@ function startAR() {
         }
     }, { once: true });
 
-    // autoStart: true di a-scene — MindAR mulai otomatis, tidak perlu manual start
-    // Fallback: sembunyikan loading jika arReady tidak fired dalam 25 detik
     setTimeout(() => {
         const overlay = document.getElementById('loading-overlay');
         if (overlay && !overlay.classList.contains('hidden')) {
@@ -127,7 +118,6 @@ function stopAR() {
     window.location.href = 'index.html';
 }
 
-/* ── Hat Selection ── */
 function selectHat(num, btn) {
     for (let i = 1; i <= TOTAL_HATS; i++) {
         if (hatEntities[i]) hatEntities[i].setAttribute('visible', false);
@@ -141,7 +131,7 @@ function selectHat(num, btn) {
 
 }
 
-/* ── Info Panel ── */
+
 function updateInfoPanel(num) {
     const topi = TOPI_DATA[num - 1];
     if (!topi) return;
@@ -156,7 +146,6 @@ function toggleInfoPanel() {
     infoPanelVisible = !infoPanelVisible;
     panel.classList.toggle('visible', infoPanelVisible);
 
-    // Ganti ikon tombol Info
     const btn = document.querySelector('button[onclick="toggleInfoPanel()"]');
     btn.innerHTML = infoPanelVisible
         ? `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -199,7 +188,6 @@ function toggleUI() {
         el.style.pointerEvents = uiVisible ? 'auto' : 'none';
     });
 
-    // Ganti ikon mata
     const btn = document.querySelector('button[onclick="toggleUI()"]');
     btn.innerHTML = uiVisible
         ? `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -211,7 +199,6 @@ function toggleUI() {
         <line x1="2" y1="2" x2="22" y2="22"/>`;
 }
 
-/* ── Screenshot ── */
 
 function takeScreenshot() {
     showToast('Mengambil foto…');
@@ -278,7 +265,6 @@ function closePreview() {
     _pendingPhotoUrl = null;
 }
 
-/* ── Toast ── */
 function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;

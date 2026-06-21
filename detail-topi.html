@@ -1,295 +1,17 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Detail Topi — Dayak Kenyah</title>
   <link rel="stylesheet" href="css/style.css" />
-  <style>
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html, body {
-      height: 100%;
-    }
-
-    body {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    /* ── Two-column layout (sama persis pola tentang.css) ── */
-    .detail-layout {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-      height: calc(100vh - 56px);
-    }
-
-    /* ══════════════════════
-       LEFT PANEL
-    ══════════════════════ */
-    .panel-left {
-      width: 55%;
-      height: 100%;
-      flex-shrink: 0;
-      background: rgba(201,168,76,0.04);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1.5rem;
-      overflow: hidden;
-      gap: 1rem;
-    }
-
-    /* Gambar topi */
-    .topi-img-wrap {
-      width: 480px;
-      height: 480px;
-      border-radius: var(--radius);
-      border: 1px solid var(--border-bright);
-      background: var(--surface);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .topi-img-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      padding: 0.5rem;
-    }
-
-    .topi-img-placeholder {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .topi-img-placeholder-icon { font-size: 3.5rem; opacity: 0.2; }
-    .topi-img-placeholder-text {
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.68rem;
-      color: var(--text-dim);
-    }
-
-    /* Nama topi */
-    .left-nama {
-      font-family: 'Cinzel', serif;
-      font-size: 1.25rem;
-      font-weight: 900;
-      color: var(--cream);
-      text-align: center;
-      line-height: 1.3;
-    }
-
-    .left-sub {
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.68rem;
-      color: var(--text-dim);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 50px;
-      padding: 0.15rem 0.65rem;
-    }
-
-    /* Badge */
-    .left-badge-row {
-      display: flex;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    /* CTA button */
-    .left-cta {
-      margin-top: 0.5rem;
-    }
-
-    /* ══════════════════════
-       RIGHT PANEL
-    ══════════════════════ */
-    .panel-right {
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding: 1.75rem 1.5rem 3rem;
-    }
-
-    .panel-right-inner {
-      max-width: 100%;
-    }
-
-    .panel-right-title {
-      font-family: 'Cinzel', serif;
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--cream);
-      margin-bottom: 1rem;
-    }
-
-    /* ── Info cards (sama persis tentang.css) ── */
-    .info-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      margin-bottom: 0.6rem;
-    }
-
-    .info-card-row {
-      display: flex;
-      flex-direction: column;
-      padding: 1rem 1rem;
-      gap: 0.25rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .info-card-row:last-child {
-      border-bottom: none;
-    }
-
-    .info-card-label {
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.68rem;
-      color: var(--text-dim);
-    }
-
-    .info-card-value {
-      font-family: 'Crimson Text', serif;
-      font-size: 0.95rem;
-      color: var(--text-main);
-      line-height: 1.5;
-    }
-
-    /* Makna — italic dengan left accent */
-    .makna-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--gold);
-      border-radius: var(--radius);
-      overflow: hidden;
-      margin-bottom: 0.6rem;
-      padding: 1rem;
-    }
-
-    .makna-label {
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.68rem;
-      color: var(--text-dim);
-      margin-bottom: 0.35rem;
-    }
-
-    .makna-value {
-      font-family: 'Crimson Text', serif;
-      font-size: 0.95rem;
-      font-style: italic;
-      color: var(--text-main);
-      line-height: 1.7;
-    }
-
-    /* Section label */
-    .section-label {
-      font-family: 'Cinzel', serif;
-      font-size: 0.72rem;
-      color: var(--gold);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin: 1rem 0 0.5rem;
-    }
-
-    /* Prev / Next */
-    .nav-prev-next {
-      display: flex;
-      justify-content: space-between;
-      gap: 0.75rem;
-      margin-top: 1.5rem;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--border);
-    }
-
-    .nav-card {
-      flex: 1;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 0.75rem 1rem;
-      cursor: pointer;
-      transition: var(--transition);
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      gap: 0.15rem;
-      max-width: 48%;
-    }
-
-    .nav-card:hover {
-      border-color: var(--gold-dark);
-      transform: translateY(-2px);
-    }
-
-    .nav-card-dir {
-      font-size: 0.65rem;
-      color: var(--text-dim);
-      font-family: 'Nunito', sans-serif;
-    }
-
-    .nav-card-name {
-      font-family: 'Cinzel', serif;
-      font-size: 0.78rem;
-      color: var(--gold);
-    }
-
-    .nav-card.next { text-align: right; margin-left: auto; }
-    .nav-card.prev { margin-right: auto; }
-
-    /* ── Mobile ── */
-    @media (max-width: 640px) {
-      html, body { overflow: auto; }
-
-      .detail-layout {
-        flex-direction: column;
-        overflow: visible;
-        height: auto;
-      }
-
-      .panel-left {
-        width: 100%;
-        height: auto;
-        flex-shrink: unset;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        padding: 2rem 1.25rem 1.5rem;
-      }
-
-      .topi-img-wrap {
-        width: 160px;
-        height: 160px;
-      }
-
-      .panel-right {
-        overflow: visible;
-        padding: 1.5rem 1.25rem 2rem;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="css/detail.css" />
 </head>
+
 <body>
 
-<!-- Header -->
-
- <div class="page-header" id="page-header">
+  <div class="page-header" id="page-header">
     <a href="javascript:history.back()" class="hud-btn" style="text-decoration:none;">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -299,124 +21,56 @@
       Kembali
     </a>
   </div>
-<div class="detail-layout">
+  <div class="detail-layout">
 
-  <!-- LEFT: Gambar + Identitas Topi -->
-  <div class="panel-left">
+    <div class="panel-left">
 
-    <div class="topi-img-wrap" id="topi-img-wrap">
-      <div class="topi-img-placeholder" id="img-placeholder">
-        <span class="topi-img-placeholder-icon">🎩</span>
-        <span class="topi-img-placeholder-text">Memuat gambar…</span>
+      <div class="topi-img-wrap" id="topi-img-wrap">
+        <div class="topi-img-placeholder" id="img-placeholder">
+          <span class="topi-img-placeholder-icon">🎩</span>
+          <span class="topi-img-placeholder-text">Memuat gambar…</span>
+        </div>
       </div>
+      <div class="left-nama" id="left-nama">—</div>
+      <div class="left-badge-row" id="kategori-wrap"></div>
+
+      <div class="left-cta">
+        <a class="btn-primary" id="cta-ar" href="ar.html">
+          <div class="card-ar-emblem">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+              <circle cx="12" cy="13" r="4" />
+            </svg>
+          </div>Coba di AR
+        </a>
+      </div>
+
     </div>
 
-    <div class="left-nama" id="left-nama">—</div>
-    <!-- <div class="left-sub">Dayak Kenyah</div> -->
+    <div class="panel-right">
+      <div class="panel-right-inner">
 
-    <div class="left-badge-row" id="kategori-wrap"></div>
+        <div class="panel-right-title">Informasi Lengkap</div>
+        <div class="info-card" id="info-card-main"><!-- JS --></div>
+        <div class="section-label">Makna / Filosofi</div>
+        <div class="makna-card" id="makna-wrap" style="display:none">
+          <div class="makna-label">◆ Makna Filosofis</div>
+          <div class="makna-value" id="makna-text">—</div>
+        </div>
 
-    <div class="left-cta">
-      <a class="btn-primary" id="cta-ar" href="ar.html"> <div class="card-ar-emblem">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-      <circle cx="12" cy="13" r="4"/>
-    </svg>
-  </div>Coba di AR</a>
+        <div class="nav-prev-next" id="nav-prev-next"><!-- JS --></div>
+
+      </div>
     </div>
 
   </div>
 
-  <!-- RIGHT: Informasi Lengkap -->
-  <div class="panel-right">
-    <div class="panel-right-inner">
+  <div id="toast"></div>
 
-      <div class="panel-right-title">Informasi Lengkap</div>
-
-      <!-- Info utama: Bahan, Pengguna, Kegunaan dalam 1 card -->
-      <div class="info-card" id="info-card-main"><!-- JS --></div>
-
-      <!-- Makna Filosofis -->
-      <div class="section-label">Makna / Filosofi</div>
-      <div class="makna-card" id="makna-wrap" style="display:none">
-        <div class="makna-label">◆ Makna Filosofis</div>
-        <div class="makna-value" id="makna-text">—</div>
-      </div>
-
-      <!-- Prev / Next -->
-      <div class="nav-prev-next" id="nav-prev-next"><!-- JS --></div>
-
-    </div>
-  </div>
-
-</div>
-
-<div id="toast"></div>
-
-<script src="js/data.js"></script>
-<script src="js/app.js"></script>
-<script>
-  const id   = parseInt(new URLSearchParams(window.location.search).get('id')) || 1;
-  const topi = getTopiById(id);
-
-  if (!topi) {
-    document.getElementById('left-nama').textContent = 'Topi tidak ditemukan';
-  } else {
-    // Header & title
-    // document.getElementById('header-title').textContent = topi.nama;
-    document.title = `${topi.nama} — Dayak Kenyah`;
-    document.getElementById('left-nama').textContent = topi.nama;
-
-    // Image
-    const placeholder = document.getElementById('img-placeholder');
-    const img = document.createElement('img');
-    img.alt = topi.nama;
-    img.src = topi.gambarDetail;
-    img.onerror = function() { /* placeholder tetap */ };
-    img.onload  = function() { placeholder.replaceWith(img); };
-
-    // Badge kategori
-   
-
-    // Info rows dalam satu card
-    const rows = [
-      { label: 'Bahan',    value: topi.bahan    },
-      { label: 'Pengguna', value: topi.pengguna },
-      { label: 'Kegunaan', value: topi.fungsi   },
-    ];
-    document.getElementById('info-card-main').innerHTML = rows.map(r => `
-      <div class="info-card-row">
-        <div class="info-card-label">${r.label}</div>
-        <div class="info-card-value">${r.value}</div>
-      </div>
-    `).join('');
-
-    // Makna
-    if (topi.makna) {
-      document.getElementById('makna-text').textContent = topi.makna;
-      document.getElementById('makna-wrap').style.display = '';
-    }
-
-    // Prev / Next
-    const navWrap  = document.getElementById('nav-prev-next');
-    const prevTopi = TOPI_DATA.find(t => t.id === id - 1);
-    const nextTopi = TOPI_DATA.find(t => t.id === id + 1);
-
-    navWrap.innerHTML = `
-      ${prevTopi
-        ? `<a class="nav-card prev" href="detail-topi.html?id=${prevTopi.id}">
-             <span class="nav-card-dir">← Sebelumnya</span>
-             <span class="nav-card-name">${prevTopi.nama}</span>
-           </a>`
-        : '<div></div>'}
-      ${nextTopi
-        ? `<a class="nav-card next" href="detail-topi.html?id=${nextTopi.id}">
-             <span class="nav-card-dir">Selanjutnya →</span>
-             <span class="nav-card-name">${nextTopi.nama}</span>
-           </a>`
-        : '<div></div>'}
-    `;
-  }
-</script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/detail.js"></script>
 </body>
+
 </html>
